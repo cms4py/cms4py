@@ -11,12 +11,18 @@ def define_table(db: DAL):
             unique=True,
             requires=[IS_NOT_EMPTY(), IS_NOT_IN_DB(db, "user.login_name")]
         ),
-        Field("nick_name", label="Nick name", requires=IS_NOT_EMPTY()),
+        Field("nickname", label="Nickname", requires=IS_NOT_EMPTY()),
         Field(
             "email",
             label="Email",
             unique=True,
             requires=[IS_NOT_EMPTY(), IS_EMAIL(), IS_NOT_IN_DB(db, "user.email")]
+        ),
+        Field(
+            "phone",
+            label="Phone",
+            unique=True,
+            requires=[IS_NOT_EMPTY(), IS_NOT_IN_DB(db, "user.phone")]
         ),
         Field("password", "password", label="Password", requires=CRYPT(), readable=False, writable=False),
         Field("openid", label="Open ID")

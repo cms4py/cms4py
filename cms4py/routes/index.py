@@ -1,6 +1,6 @@
-from ..commons.Cms4pyRequestHandler import Cms4pyRequestHandler
+from ..commons.Cms4pyRequestContext import Cms4pyRequestContext
 
 
-class Index(Cms4pyRequestHandler):
+class Index(Cms4pyRequestContext):
     def get(self):
         self.render("index.twig")

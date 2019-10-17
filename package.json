@@ -1,0 +1,32 @@
+{
+  "name": "cms4py",
+  "version": "1.0.0",
+  "description": "cms4py",
+  "main": "gulpfile.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "gulp",
+    "gulp_build_release": "gulp BuildRelease",
+    "gulp_build_debug": "gulp BuildDebug"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/plter/cms4py.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/plter/cms4py/issues"
+  },
+  "homepage": "https://github.com/plter/cms4py#readme",
+  "devDependencies": {
+    "css-loader": "^3.2.0",
+    "gulp": "^4.0.2",
+    "html-loader": "^0.5.5",
+    "style-loader": "^1.0.0",
+    "webpack-stream": "^5.2.1"
+  }
+}

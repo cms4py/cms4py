@@ -7,12 +7,12 @@ import tornado.web
 from tornado import httputil
 
 import config
-from .Cms4pyURL import URL
+from .URL import URL
 from ..db import connect_db
 from pydal import DAL
 
 
-class Cms4pyRequestHandler(tornado.web.RequestHandler):
+class Cms4pyRequestContext(tornado.web.RequestHandler):
 
     def __init__(self, application: "tornado.web.Application", request: httputil.HTTPServerRequest,
                  **kwargs: Any) -> None:
@@ -80,3 +80,6 @@ class Cms4pyRequestHandler(tornado.web.RequestHandler):
                 session_content=tornado.escape.json_encode(self.session)
             )
         self.db.close()
+
+    def has_argument(self, arg_name):
+        return arg_name in self.request.query_arguments or arg_name in self.request.body_arguments
