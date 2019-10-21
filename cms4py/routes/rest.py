@@ -19,11 +19,11 @@ class DbAPI(Cms4pyRequestContext):
 
 
 class Action(Cms4pyRequestContext):
-    def common_request(self, action):
-        self.write(tornado.escape.json_encode(do_action(action, self)))
+    async def common_request(self, action):
+        self.write(tornado.escape.json_encode(await do_action(action, self)))
 
-    def get(self, action):
-        self.common_request(action)
+    async def get(self, action):
+        await self.common_request(action)
 
-    def post(self, action):
-        self.common_request(action)
+    async def post(self, action):
+        await self.common_request(action)

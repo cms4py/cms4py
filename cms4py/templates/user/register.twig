@@ -13,7 +13,7 @@
                     <td class="font-weight-bold">{{ _("Login name") }}</td>
                     <td>
                         <input type="text" name="login_name" required class="form-control" value="{{ login_name }}"
-                               @focusout="loginNameFocusoutHandler" v-model="login_name">
+                               @change="loginNameChangeHandler" v-model="login_name">
                         <div v-html="login_name_alert_msg"></div>
                     </td>
                 </tr>
@@ -59,6 +59,7 @@
     <div class="password_confirm_not_match">{{ _('Password confirm not match') }}</div>
     <div class="password_confirm_matched">{{ _('Password confirm matched') }}</div>
     <div class="checking_login_name">{{ _('Checking login name') }}</div>
+    <div class="login_name_exists">{{ _('Login name exists') }}</div>
 </div>
 <script src="{{ URL(config.STATIC_FILES_URL_PATH,'js','user_register.js',vars=dict(app_version=config.APP_VERSION)) }}"></script>
 {% end %}

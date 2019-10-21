@@ -8,8 +8,8 @@ actions = {
 }
 
 
-def do_action(action_name, context: Cms4pyRequestContext.Cms4pyRequestContext):
+async def do_action(action_name, context: Cms4pyRequestContext.Cms4pyRequestContext):
     if action_name in actions:
-        return actions[action_name](context)
+        return await actions[action_name](context)
     else:
         return result.make_result(result.CODE_ACTION_NOT_FOUND, "Action not found.")

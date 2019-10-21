@@ -20,4 +20,7 @@ if __name__ == "__main__":
     tornado.locale.load_translations(config.TRANSLATIONS_FOLDER)
     server = HTTPServer(cms4py_app)
     server.listen(config.PORT)
-    current.start()
+    try:
+        current.start()
+    except KeyboardInterrupt:
+        pass
