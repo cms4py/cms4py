@@ -21,11 +21,12 @@ STATIC_FILES_ROOT = os.path.join(APP_ROOT, "cms4py", "static")
 STATIC_FILES_URL_PATH = "static"
 DEFAULT_STATIC_FILE_NAME = "index.html"
 
-DB_URI = "mysql://root:example@db/cms4py"
-DB_POOR_SIZE = 0
-DB_FOLDER = os.path.join(APP_ROOT, "cms4py", "databases")
-DB_MIGRATE = True
-DB_USE_BIGINT_ID = True
+DB_HOST = "db"
+DB_PORT = 3306
+DB_USER = "root"
+DB_PASSWORD = "example"
+DB_NAME = "cms4py"
+DB_POOR_SIZE = 10
 
 """
 If you want to use secure cookies to store the session id, change this value

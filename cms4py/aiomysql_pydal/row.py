@@ -45,6 +45,9 @@ class Rows:
     def raw_data(self):
         return self._raw_data
 
+    def first(self):
+        return self.rows[0] if self.rows.__len__() > 0 else None
+
     def __repr__(self):
         return self.__str__()
 
@@ -53,3 +56,6 @@ class Rows:
 
     def __getitem__(self, key):
         return self.rows[key]
+
+    def __getattr__(self, item):
+        return self.__getitem__(item)

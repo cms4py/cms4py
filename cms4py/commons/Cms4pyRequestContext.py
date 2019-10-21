@@ -1,15 +1,16 @@
+import json.decoder
 import os
-import uuid, json.decoder
+import uuid, asyncio
 from typing import Optional, Dict, Any, Awaitable
 
+import tornado.ioloop
 import tornado.escape
 import tornado.web
 from tornado import httputil
 
 import config
 from .URL import URL
-from ..db import connect_db
-from pydal import DAL
+from cms4py.db import DbConnector
 
 
 class Cms4pyRequestContext(tornado.web.RequestHandler):
@@ -21,6 +22,7 @@ class Cms4pyRequestContext(tornado.web.RequestHandler):
         self._session = {}
         self._session_id = None
         self._session_changed = False
+        self._pydal_connection = None
 
     @property
     def db(self):
@@ -41,11 +43,13 @@ class Cms4pyRequestContext(tornado.web.RequestHandler):
     def session_id(self):
         return self._session_id
 
-    def prepare(self) -> Optional[Awaitable[None]]:
-        self._db = db = connect_db()
+    async def prepare(self):
+        self._pydal_connection = await DbConnector.get_instance().async_dal.acquire()
+        self._db = db = await self._pydal_connection.cursor()
+
         key = config.CMS4PY_SESSION_ID_KEY
         self._session_id = self.get_secure_cookie(key) if config.COOKIE_SECRET else self.get_cookie(key)
-        session_record = db(db.session.session_id == self.session_id).select().first()
+        session_record = (await db(db.session.session_id == self.session_id).select()).first()
         if session_record:
             session_str = session_record.session_content
             try:
@@ -58,7 +62,6 @@ class Cms4pyRequestContext(tornado.web.RequestHandler):
                 self.set_secure_cookie(key, self.session_id)
             else:
                 self.set_cookie(key, self.session_id)
-        return super().prepare()
 
     def get_template_path(self) -> Optional[str]:
         return config.TEMPLATES_FOLDER
@@ -71,15 +74,19 @@ class Cms4pyRequestContext(tornado.web.RequestHandler):
         ns["session"] = self._session
         return ns
 
-    def on_finish(self) -> None:
-        super().on_finish()
+    async def cleanup(self):
         if self._session_changed:
-            self.db.session.update_or_insert(
+            await self.db.session.update_or_insert(
                 self.db.session.session_id == self.session_id,
                 session_id=self.session_id,
                 session_content=tornado.escape.json_encode(self.session)
             )
-        self.db.close()
+        await self.db.close()
+        await DbConnector.get_instance().async_dal.release(self._pydal_connection)
+
+    def on_finish(self) -> None:
+        super().on_finish()
+        tornado.ioloop.IOLoop.current().add_callback(self.cleanup)
 
     def has_argument(self, arg_name):
         return arg_name in self.request.query_arguments or arg_name in self.request.body_arguments
