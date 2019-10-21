@@ -11,6 +11,7 @@ from tornado import httputil
 import config
 from .URL import URL
 from cms4py.db import DbConnector
+from cms4py.aiomysql_pydal import PyDALCursor
 
 
 class Cms4pyRequestContext(tornado.web.RequestHandler):
@@ -25,7 +26,7 @@ class Cms4pyRequestContext(tornado.web.RequestHandler):
         self._pydal_connection = None
 
     @property
-    def db(self):
+    def db(self) -> PyDALCursor:
         return self._db
 
     @property
