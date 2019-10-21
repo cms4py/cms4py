@@ -75,14 +75,16 @@ class Cms4pyRequestContext(tornado.web.RequestHandler):
         return ns
 
     async def cleanup(self):
-        if self._session_changed:
-            await self.db.session.update_or_insert(
-                self.db.session.session_id == self.session_id,
-                session_id=self.session_id,
-                session_content=tornado.escape.json_encode(self.session)
-            )
-        await self.db.close()
-        await DbConnector.get_instance().async_dal.release(self._pydal_connection)
+        if self.db:
+            if self._session_changed:
+                await self.db.session.update_or_insert(
+                    self.db.session.session_id == self.session_id,
+                    session_id=self.session_id,
+                    session_content=tornado.escape.json_encode(self.session)
+                )
+            await self.db.close()
+        if self._pydal_connection:
+            await DbConnector.get_instance().async_dal.release(self._pydal_connection)
 
     def on_finish(self) -> None:
         super().on_finish()
