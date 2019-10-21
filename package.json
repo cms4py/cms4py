@@ -7,7 +7,6 @@
     "doc": "docs"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "build": "gulp",
     "gulp_build_release": "gulp BuildRelease",
     "gulp_build_debug": "gulp BuildDebug"

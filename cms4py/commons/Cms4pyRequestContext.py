@@ -23,7 +23,7 @@ class Cms4pyRequestContext(tornado.web.RequestHandler):
         self._session_changed = False
 
     @property
-    def db(self) -> DAL:
+    def db(self):
         return self._db
 
     @property
