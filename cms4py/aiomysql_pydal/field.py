@@ -27,4 +27,5 @@ class Field:
         return self._pydal_field.__str__()
 
     def like(self, expression, case_sensitive=True, escape=None):
-        return self._pydal_field.like(expression, case_sensitive, escape)
+        query = self._pydal_field.like(expression, case_sensitive, escape)
+        return query
