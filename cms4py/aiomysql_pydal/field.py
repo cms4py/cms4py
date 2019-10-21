@@ -8,6 +8,9 @@ class Field:
     def __eq__(self, other):
         return self._pydal_field.__eq__(other)
 
+    def __ne__(self, other):
+        return self._pydal_field.__ne__(other)
+
     def __gt__(self, other):
         return self._pydal_field.__gt__(other)
 
