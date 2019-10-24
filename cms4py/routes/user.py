@@ -36,6 +36,7 @@ class Register(Cms4pyRequestContext):
 
 
 class Login(Cms4pyRequestContext):
+
     async def get(self):
         self.response.title = self.locale.translate("Login")
         await self.render("user/login.twig")
