@@ -1,4 +1,4 @@
-from ..commons.cms4py_request_context import Cms4pyRequestContext
+from ..commons.request_context import RequestContext
 from pydal.restapi import RestAPI, Policy
 import tornado.escape
 from ..actions import do_action
@@ -7,7 +7,7 @@ policy = Policy()
 policy.set('*', 'GET', authorize=lambda tablename, id, get_vars, post_vars: True, allowed_patterns=['*'])
 
 
-class DbAPI(Cms4pyRequestContext):
+class DbAPI(RequestContext):
     # def get(self, table, record_id):
     #     get_vars = {}
     #     for key in self.request.query_arguments:
@@ -18,7 +18,7 @@ class DbAPI(Cms4pyRequestContext):
     pass
 
 
-class Action(Cms4pyRequestContext):
+class Action(RequestContext):
     async def common_request(self, action):
         self.write(tornado.escape.json_encode(await do_action(action, self)))
 

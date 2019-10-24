@@ -4,7 +4,7 @@ from tornado.web import HTTPServer
 
 import config
 from cms4py import cms4py_app
-from cms4py.log import log
+from cms4py.commons.log import log
 from cms4py.db import DbConnector
 
 

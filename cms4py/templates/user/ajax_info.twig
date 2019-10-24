@@ -6,7 +6,11 @@
     </a>
     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarUserInfoDropdown">
         <a class="dropdown-item" href="{{ URL('user','profile') }}">{{ _("Profile") }}</a>
-        <a class="dropdown-item link-logout" href="{{ URL('user','logout') }}">{{ _("Logout") }}</a>
+        <a class="dropdown-item" href="{{ URL('user','logout') }}">{{ _("Logout") }}</a>
+        {% if is_admin %}
+        <div class="dropdown-divider"></div>
+        <a class="dropdown-item" href="{{ URL('dashboard') }}">{{ _('Management') }}</a>
+        {% end %}
     </div>
 </li>
 {% else %}

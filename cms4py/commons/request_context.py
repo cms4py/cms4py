@@ -13,9 +13,10 @@ from cms4py.aiomysql_pydal import PyDALCursor
 from cms4py.db import DbConnector
 from .response import Response
 from .url import URL
+from . import auth
 
 
-class Cms4pyRequestContext(tornado.web.RequestHandler):
+class RequestContext(tornado.web.RequestHandler):
 
     def __init__(self, application: "tornado.web.Application", request: httputil.HTTPServerRequest,
                  **kwargs: Any) -> None:
@@ -127,3 +128,6 @@ class Cms4pyRequestContext(tornado.web.RequestHandler):
 
     def get_request_uri(self):
         return self.request.path + (("?" + self.request.query) if self.request.query else "")
+
+    async def has_membership(self, role):
+        return await auth.has_membership(self, role)

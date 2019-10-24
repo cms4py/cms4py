@@ -1,8 +1,8 @@
-from ...commons.cms4py_request_context import Cms4pyRequestContext
+from ...commons.request_context import RequestContext
 from .. import result
 
 
-async def user_exists_by_field(context: Cms4pyRequestContext, field_name):
+async def user_exists_by_field(context: RequestContext, field_name):
     field_value = context.get_argument(field_name, None)
     if field_value:
         db = context.db
@@ -14,11 +14,11 @@ async def user_exists_by_field(context: Cms4pyRequestContext, field_name):
         return result.make_result(result.CODE_ARGUMENTS_ERROR, "Arguments error")
 
 
-async def login_name_exists(context: Cms4pyRequestContext):
+async def login_name_exists(context: RequestContext):
     return await user_exists_by_field(context, "login_name")
 
 
-async def user_exists(context: Cms4pyRequestContext):
+async def user_exists(context: RequestContext):
     field_name = context.get_argument("field_name", None)
     if field_name:
         return await user_exists_by_field(context, field_name)

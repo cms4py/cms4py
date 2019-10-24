@@ -1,9 +1,9 @@
-from ..commons.cms4py_request_context import Cms4pyRequestContext
+from ..commons.request_context import RequestContext
 from ..commons.url import URL
 from ..commons import auth
 
 
-class Register(Cms4pyRequestContext):
+class Register(RequestContext):
 
     async def get(self):
         await self.render(
@@ -35,7 +35,7 @@ class Register(Cms4pyRequestContext):
             )
 
 
-class Login(Cms4pyRequestContext):
+class Login(RequestContext):
 
     async def get(self):
         self.response.title = self.locale.translate("Login")
@@ -65,14 +65,14 @@ class Login(Cms4pyRequestContext):
         await self.render("user/login.twig")
 
 
-class Profile(Cms4pyRequestContext):
+class Profile(RequestContext):
 
     @auth.require_login
     async def get(self):
         await self.render("user/profile.twig")
 
 
-class Logout(Cms4pyRequestContext):
+class Logout(RequestContext):
 
     async def get(self):
         self.set_current_user(None)
@@ -83,7 +83,10 @@ class Logout(Cms4pyRequestContext):
             self.redirect("/")
 
 
-class AjaxInfo(Cms4pyRequestContext):
+class AjaxInfo(RequestContext):
 
     async def get(self):
-        await self.render("user/ajax_info.twig")
+        await self.render(
+            "user/ajax_info.twig",
+            is_admin=await self.has_membership("admin")
+        )

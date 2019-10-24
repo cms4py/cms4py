@@ -1,4 +1,5 @@
 from . import index, user, rest, session_counter
+from .dashboard import index as dashboard_index
 
 routes = [
     (r"/", index.Index),
@@ -10,4 +11,6 @@ routes = [
     (r"/rest/db_api/([^/]+)/?([^/]*)", rest.DbAPI),
     (r"/rest/action/([^/]+)", rest.Action),
     (r"/session_counter", session_counter.SessionCounter),
+    (r"/dashboard", dashboard_index.Index),
+    (r"/dashboard/index", dashboard_index.Index),
 ]
