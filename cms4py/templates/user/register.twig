@@ -12,7 +12,7 @@
                 <tr>
                     <td class="font-weight-bold">{{ _("Login name") }}</td>
                     <td>
-                        <input type="text" name="login_name" required class="form-control" value="{{ login_name }}"
+                        <input type="text" name="login_name" required class="form-control"
                                @change="loginNameChangeHandler" v-model="login_name">
                         <div v-html="login_name_alert_msg"></div>
                     </td>
@@ -26,13 +26,17 @@
                 <tr>
                     <td class="font-weight-bold">{{ _("Email") }}</td>
                     <td>
-                        <input type="email" name="email" required class="form-control">
+                        <input type="email" name="email" required class="form-control"
+                               @change="emailChangeHandler" v-model="email">
+                        <div v-html="email_alert_msg"></div>
                     </td>
                 </tr>
                 <tr>
                     <td class="font-weight-bold">{{ _("Phone") }}</td>
                     <td>
-                        <input type="text" name="phone" required class="form-control">
+                        <input type="text" name="phone" required class="form-control"
+                               @change="phoneChangeHandler" v-model="phone">
+                        <div v-html="phone_alert_msg"></div>
                     </td>
                 </tr>
                 <tr>
@@ -51,7 +55,12 @@
                 </tr>
                 </tbody>
             </table>
-            <input type="submit" class="btn btn-primary" value="{{ _("Register") }}" :disabled="!allFieldsVerified">
+            <div>
+                <input type="submit" class="btn btn-primary" value="{{ _("Register") }}" :disabled="!allFieldsVerified">
+                <a class="btn btn-link" href="{{ URL('user','login') }}">
+                    {{ _("Already have an account, click here to login") }}
+                </a>
+            </div>
         </form>
     </div>
 </div>
@@ -60,6 +69,10 @@
     <div class="password_confirm_matched">{{ _('Password confirm matched') }}</div>
     <div class="checking_login_name">{{ _('Checking login name') }}</div>
     <div class="login_name_exists">{{ _('Login name exists') }}</div>
+    <div class="checking_email">{{ _('Checking email') }}</div>
+    <div class="email_exists">{{ _('Email exists') }}</div>
+    <div class="checking_phone">{{ _('Checking phone') }}</div>
+    <div class="phone_exists">{{ _('Phone exists') }}</div>
 </div>
 <script src="{{ URL(config.STATIC_FILES_URL_PATH,'js','user_register.js',vars=dict(app_version=config.APP_VERSION)) }}"></script>
 {% end %}

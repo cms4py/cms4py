@@ -15,11 +15,20 @@ class Row:
     def raw_data(self):
         return self._raw_data
 
+    def as_dict(self):
+        return self._row_data
+
     def __repr__(self):
         return self.__str__()
 
     def __str__(self):
         return self._row_data.__str__()
+
+    def __getitem__(self, item):
+        return self._row_data[item]
+
+    def __getattr__(self, item):
+        return self.__getitem__(item)
 
 
 class Rows:
@@ -37,6 +46,12 @@ class Rows:
     def rows(self):
         return self._rows
 
+    def as_list(self):
+        result = []
+        for r in self.rows:
+            result.append(r.as_dict())
+        return result
+
     @property
     def field_names(self):
         return self._field_names
@@ -48,6 +63,9 @@ class Rows:
     def first(self):
         return self.rows[0] if self.rows.__len__() > 0 else None
 
+    def count(self):
+        return len(self.rows)
+
     def __repr__(self):
         return self.__str__()
 
@@ -56,6 +74,3 @@ class Rows:
 
     def __getitem__(self, key):
         return self.rows[key]
-
-    def __getattr__(self, item):
-        return self.__getitem__(item)

@@ -1,17 +1,18 @@
 import json.decoder
 import os
-import uuid, asyncio
-from typing import Optional, Dict, Any, Awaitable
+import uuid
+from typing import Optional, Dict, Any
 
-import tornado.ioloop
 import tornado.escape
+import tornado.ioloop
 import tornado.web
 from tornado import httputil
 
 import config
-from .URL import URL
-from cms4py.db import DbConnector
 from cms4py.aiomysql_pydal import PyDALCursor
+from cms4py.db import DbConnector
+from .response import Response
+from .url import URL
 
 
 class Cms4pyRequestContext(tornado.web.RequestHandler):
@@ -24,6 +25,11 @@ class Cms4pyRequestContext(tornado.web.RequestHandler):
         self._session_id = None
         self._session_changed = False
         self._pydal_connection = None
+        self._response = Response()
+
+    @property
+    def response(self):
+        return self._response
 
     @property
     def db(self) -> PyDALCursor:
@@ -46,6 +52,7 @@ class Cms4pyRequestContext(tornado.web.RequestHandler):
 
     async def prepare(self):
         self._pydal_connection = await DbConnector.get_instance().async_dal.acquire()
+        await self._pydal_connection.autocommit(True)
         self._db = db = await self._pydal_connection.cursor()
 
         key = config.CMS4PY_SESSION_ID_KEY
@@ -55,6 +62,7 @@ class Cms4pyRequestContext(tornado.web.RequestHandler):
             session_str = session_record.session_content
             try:
                 self._session = tornado.escape.json_decode(session_str)
+                self.current_user = self.get_session("current_user")
             except json.decoder.JSONDecodeError:
                 pass
         if not self.session_id or not session_record:
@@ -67,12 +75,35 @@ class Cms4pyRequestContext(tornado.web.RequestHandler):
     def get_template_path(self) -> Optional[str]:
         return config.TEMPLATES_FOLDER
 
+    def set_current_user(self, user):
+        """
+        If you want to store the current user to session, call this function
+        :param user:
+        :return:
+        """
+        if user:
+            self.set_session(
+                "current_user",
+                dict(
+                    id=user.id,
+                    login_name=user.login_name,
+                    email=user.email,
+                    phone=user.phone,
+                    nickname=user.nickname
+                )
+            )
+        else:
+            del self.session["current_user"]
+            self._session_changed = True
+        self.current_user = user
+
     def get_template_namespace(self) -> Dict[str, Any]:
         ns = super().get_template_namespace()
         ns["config"] = config
         ns["path"] = os.path
         ns["URL"] = URL
         ns["session"] = self._session
+        ns['response'] = self.response
         return ns
 
     async def cleanup(self):
@@ -93,3 +124,6 @@ class Cms4pyRequestContext(tornado.web.RequestHandler):
 
     def has_argument(self, arg_name):
         return arg_name in self.request.query_arguments or arg_name in self.request.body_arguments
+
+    def get_request_uri(self):
+        return self.request.path + (("?" + self.request.query) if self.request.query else "")

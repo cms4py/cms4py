@@ -18,10 +18,16 @@ class Table:
     def pydal_cursor(self):
         return self._pydal_cursor
 
-    async def insert(self, **kvargs) -> int:
-        sql = self._pydal_table._insert(**kvargs)
+    async def insert(self, **kwargs) -> int:
+        sql = self._pydal_table._insert(**kwargs)
         await self.pydal_cursor.execute(sql)
         return self.pydal_cursor.rowcount
+
+    async def update_or_insert(self, query, **kwargs):
+        if await self.pydal_cursor(query).isempty():
+            return await self.insert(**kwargs)
+        else:
+            return await self.pydal_cursor(query).update(**kwargs)
 
     def __getitem__(self, item):
         return self.__getattr__(item)

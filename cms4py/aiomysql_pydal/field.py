@@ -32,3 +32,7 @@ class Field:
     def like(self, expression, case_sensitive=True, escape=None):
         query = self._pydal_field.like(expression, case_sensitive, escape)
         return query
+
+    @property
+    def requires(self):
+        return self._pydal_field.requires

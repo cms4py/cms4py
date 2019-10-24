@@ -1,4 +1,4 @@
-from ..commons.Cms4pyRequestContext import Cms4pyRequestContext
+from ..commons.cms4py_request_context import Cms4pyRequestContext
 from pydal.restapi import RestAPI, Policy
 import tornado.escape
 from ..actions import do_action

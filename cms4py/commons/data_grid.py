@@ -1,4 +1,4 @@
-from .URL import URL
+from .url import URL
 import tornado.httputil
 
 

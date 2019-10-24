@@ -1,4 +1,4 @@
-from ..commons.Cms4pyRequestContext import Cms4pyRequestContext
+from ..commons.cms4py_request_context import Cms4pyRequestContext
 
 
 class Index(Cms4pyRequestContext):

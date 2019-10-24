@@ -1,0 +1,33 @@
+{% extends "../layout.twig" %}
+{% block body %}
+<div class="container">
+    <div class="card" style="width: 500px;margin: 20px auto 0 auto;">
+        <div class="card-header">{{ _("Login") }}</div>
+        <div class="card-body">
+            <form method="post" enctype="application/x-www-form-urlencoded">
+                <table class="table table-borderless">
+                    <tbody>
+                    <tr>
+                        <td class="font-weight-bold">{{ _("Login name") }}</td>
+                        <td>
+                            <input type="text" class="form-control" required name="login"
+                                   placeholder="{{ _('Login name / Email / Phone') }}">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="font-weight-bold">{{ _("Password") }}</td>
+                        <td><input type="password" class="form-control" required name="password"></td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div>
+                    <input type="submit" class="btn btn-primary" value="{{ _('Login') }}">
+                    <a class="btn btn-link" href="{{ URL('user','register') }}">
+                        {{ _("Haven't got an account? click here to register") }}
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% end %}

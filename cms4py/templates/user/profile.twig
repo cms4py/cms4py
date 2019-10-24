@@ -1,0 +1,34 @@
+{% extends "../layout.twig" %}
+{% block body %}
+{% if "current_user" in session %}
+<div class="container">
+    <div class="card" style="margin-top: 20px;">
+        <div class="card-header">
+            {{ _("Profile") }}
+        </div>
+        <div class="card-body">
+            <table class="table">
+                <tbody>
+                <tr>
+                    <td class="font-weight-bold">{{ _("Login name") }}</td>
+                    <td>{{ session["current_user"]["login_name"] }}</td>
+                </tr>
+                <tr>
+                    <td class="font-weight-bold">{{ _("Nickname") }}</td>
+                    <td>{{ session["current_user"]["nickname"] }}</td>
+                </tr>
+                <tr>
+                    <td class="font-weight-bold">{{ _("Email") }}</td>
+                    <td>{{ session["current_user"]["email"] }}</td>
+                </tr>
+                <tr>
+                    <td class="font-weight-bold">{{ _("Phone") }}</td>
+                    <td>{{ session["current_user"]["phone"] }}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% end %}
+{% end %}
