@@ -42,3 +42,7 @@ class Field:
     @property
     def requires(self):
         return self._pydal_field.requires
+
+    @property
+    def type(self):
+        return self._pydal_field.type

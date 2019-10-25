@@ -19,13 +19,15 @@ def default_header_render(fields):
 
 
 def default_foot_render(request: tornado.httputil.HTTPServerRequest, current_page_index, paginate, all_count):
-    def create_link(page_index, label=None):
-        return f"<a class='btn-page-number' href='{URL(request.path, vars=dict(page_index=page_index))}'>{(page_index + 1) if not label else label}</a>"
+    def create_link(page_index, label=None, active=False):
+        return f"<li class=\"page-item {'active' if active else ''}\">" \
+               f"  <a class=\"btn-page-number page-link\" href='{URL(request.path, vars=dict(page_index=page_index))}'>{(page_index + 1) if not label else label}</a>" \
+               f"</li>"
 
     last_page_index = int(all_count / paginate)
     html_str = ""
     if last_page_index > 0:
-        page_number_btns = [create_link(current_page_index)]
+        page_number_btns = [create_link(current_page_index, active=True)]
         i = 0
         for i in range(current_page_index - 1, current_page_index - 5, -1):
             if i < 0:
@@ -47,21 +49,29 @@ def default_foot_render(request: tornado.httputil.HTTPServerRequest, current_pag
 async def grid(
         context,
         query,
+        fields=None,
+        order_by=None,
+        paginate=20,
         row_render=default_row_render,
         header_render=default_header_render,
-        foot_render=default_foot_render,
-        order_by=None,
-        paginate=20
+        foot_render=default_foot_render
 ):
     request = context.request
     db = context.db
     page_index = int(context.get_query_argument("page_index", "0"))
 
     all_count = await db(query).count()
-    db_rows = await db(query).select(
-        limitby=(paginate * page_index, (page_index + 1) * paginate),
-        orderby=order_by
-    )
+    if fields:
+        db_rows = await db(query).select(
+            *fields,
+            limitby=(paginate * page_index, (page_index + 1) * paginate),
+            orderby=order_by
+        )
+    else:
+        db_rows = await db(query).select(
+            limitby=(paginate * page_index, (page_index + 1) * paginate),
+            orderby=order_by
+        )
 
     table_body_rows_html_content = ""
     for r in db_rows:
@@ -74,7 +84,13 @@ async def grid(
                          f"      <tbody>{table_body_rows_html_content}</tbody>" \
                          f"    </table>" \
                          f"  </div>" \
-                         f"  <div class='page-numbers-container'>{foot_render(request, page_index, paginate, all_count)}</div>" \
+                         f"  <div class='page-numbers-container'>" \
+                         f"    <nav>" \
+                         f"      <ul class='pagination'>" \
+                         f"        {foot_render(request, page_index, paginate, all_count)}" \
+                         f"      </ul>" \
+                         f"    </nav>" \
+                         f"  </div>" \
                          f"</div>"
 
     return table_html_content
