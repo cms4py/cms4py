@@ -2,5 +2,6 @@ from ..commons.request_context import RequestContext
 
 
 class Index(RequestContext):
-    def get(self):
-        self.render("index.twig")
+
+    async def get(self):
+        await self.render("index.twig")

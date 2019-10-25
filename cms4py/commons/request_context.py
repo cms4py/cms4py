@@ -1,12 +1,13 @@
 import json.decoder
 import os
 import uuid
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, Union
 
 import tornado.escape
 import tornado.ioloop
 import tornado.web
 from tornado import httputil
+from tornado.concurrent import Future
 
 import config
 from cms4py.aiomysql_pydal import PyDALCursor
@@ -27,6 +28,11 @@ class RequestContext(tornado.web.RequestHandler):
         self._session_changed = False
         self._pydal_connection = None
         self._response = Response()
+        self._result_html = None
+
+    @property
+    def result_html(self):
+        return self._result_html
 
     @property
     def response(self):
@@ -131,3 +137,7 @@ class RequestContext(tornado.web.RequestHandler):
 
     async def has_membership(self, role):
         return await auth.has_membership(self, role)
+
+    def finish(self, chunk: Union[str, bytes, dict] = None) -> "Future[None]":
+        self._result_html = chunk
+        return super().finish(chunk)
