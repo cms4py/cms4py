@@ -18,7 +18,7 @@ class AllUsers(RequestContext):
                 "phone"
             ]
         )
-        await self.render("dashboard/user/all_users.twig", grid=grid)
+        await self.render("dashboard/user/all_users.html", grid=grid)
 
 
 class AllGroups(RequestContext):
@@ -30,7 +30,7 @@ class AllGroups(RequestContext):
             self.db.user_group.id > 0,
             order_by=~self.db.user_group.id
         )
-        await self.render("dashboard/user/all_groups.twig", grid=grid)
+        await self.render("dashboard/user/all_groups.html", grid=grid)
 
 
 class Memberships(RequestContext):
@@ -50,4 +50,4 @@ class Memberships(RequestContext):
                 "user_group.role",
             ]
         )
-        await self.render("dashboard/user/memberships.twig", grid=grid)
+        await self.render("dashboard/user/memberships.html", grid=grid)
