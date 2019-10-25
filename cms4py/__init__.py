@@ -2,11 +2,6 @@ import tornado.web
 
 import config
 from .routes import routes
-from cms4py.socketio import socketio_tornado_handler
-
-routes.append(
-    (r"/socket.io/", socketio_tornado_handler)
-)
 
 routes.append(
     (
