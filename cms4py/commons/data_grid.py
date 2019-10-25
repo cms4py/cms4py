@@ -1,8 +1,7 @@
 from .url import URL
-import tornado.httputil
 
 
-def default_row_render(row, fields):
+def default_row_render(context, row, fields):
     html_str = "<tr>"
     for f in fields:
         html_str += f"<td>{row[f]}</td>"
@@ -10,15 +9,17 @@ def default_row_render(row, fields):
     return html_str
 
 
-def default_header_render(fields):
+def default_header_render(context, fields):
     html_str = "<tr>"
     for f in fields:
-        html_str += f"<th>{f}</th>"
+        html_str += f"<th>{context.locale.translate(f)}</th>"
     html_str += "</tr>"
     return html_str
 
 
-def default_foot_render(request: tornado.httputil.HTTPServerRequest, current_page_index, paginate, all_count):
+def default_foot_render(context, current_page_index, paginate, all_count):
+    request = context.request
+
     def create_link(page_index, label=None, active=False):
         return f"<li class=\"page-item {'active' if active else ''}\">" \
                f"  <a class=\"btn-page-number page-link\" href='{URL(request.path, vars=dict(page_index=page_index))}'>{(page_index + 1) if not label else label}</a>" \
@@ -75,19 +76,19 @@ async def grid(
 
     table_body_rows_html_content = ""
     for r in db_rows:
-        table_body_rows_html_content += row_render(r, db_rows.field_names)
+        table_body_rows_html_content += row_render(context, r, db_rows.field_names)
 
     table_html_content = f"<div>" \
                          f"  <div>" \
                          f"    <table class='data-grid table'>" \
-                         f"      <thead>{header_render(db_rows.field_names)}</thead>" \
+                         f"      <thead>{header_render(context, db_rows.field_names)}</thead>" \
                          f"      <tbody>{table_body_rows_html_content}</tbody>" \
                          f"    </table>" \
                          f"  </div>" \
                          f"  <div class='page-numbers-container'>" \
                          f"    <nav>" \
                          f"      <ul class='pagination'>" \
-                         f"        {foot_render(request, page_index, paginate, all_count)}" \
+                         f"        {foot_render(context, page_index, paginate, all_count)}" \
                          f"      </ul>" \
                          f"    </nav>" \
                          f"  </div>" \
