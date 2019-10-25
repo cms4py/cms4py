@@ -74,5 +74,5 @@
     <div class="checking_phone">{{ _('Checking phone') }}</div>
     <div class="phone_exists">{{ _('Phone exists') }}</div>
 </div>
-<script src="{{ URL(config.STATIC_FILES_URL_PATH,'js','user_register.js',vars=dict(app_version=config.APP_VERSION)) }}"></script>
+<script src="{{ URL('js','user_register.js',vars=dict(app_version=config.APP_VERSION)) }}"></script>
 {% end %}
