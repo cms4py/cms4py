@@ -9,6 +9,8 @@
 "email"                                         ,"邮箱"
 "Phone"                                         ,"手机号"
 "phone"                                         ,"手机号"
+"group"                                         ,"组"
+"user"                                          ,"用户"
 "Password"                                      ,"密码"
 "Password confirm"                              ,"密码确认"
 "Password confirm not match"                    ,"密码确认不匹配"

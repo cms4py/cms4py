@@ -46,6 +46,9 @@
                 <div class="dropdown-menu">
                     <a class="dropdown-item" href="{{ URL('dashboard','user','all_users') }}">{{ _('All users') }}</a>
                     <a class="dropdown-item" href="{{ URL('dashboard','user','all_groups') }}">{{ _('All groups') }}</a>
+                    <a class="dropdown-item" href="{{ URL('dashboard','user','memberships') }}">
+                        {{ _('Memberships') }}
+                    </a>
                 </div>
             </li>
             <li class="nav-item dropdown">
@@ -59,10 +62,6 @@
                 </div>
             </li>
         </ul>
-        <form class="form-inline my-2 my-lg-0">
-            <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-            <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Search</button>
-        </form>
     </div>
     <script>$("<ul class='navbar-nav'></ul>").appendTo("#navbarSupportedContent").load("/user/ajax_info")</script>
 </nav>

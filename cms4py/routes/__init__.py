@@ -18,4 +18,5 @@ routes = [
     (r"/dashboard/site/versions", site.Versions),
     (r"/dashboard/user/all_users", dashboard_user.AllUsers),
     (r"/dashboard/user/all_groups", dashboard_user.AllGroups),
+    (r"/dashboard/user/memberships", dashboard_user.Memberships),
 ]
