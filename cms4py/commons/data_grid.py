@@ -44,27 +44,33 @@ def default_foot_render(request: tornado.httputil.HTTPServerRequest, current_pag
     return html_str
 
 
-def grid(db, request: tornado.httputil.HTTPServerRequest, query,
-         row_render=default_row_render,
-         header_render=default_header_render,
-         foot_render=default_foot_render,
-         order_by=None,
-         paginate=20):
-    page_index = 0
-    if request.query_arguments.page_index and request.query_arguments.page_index.isdigit():
-        page_index = int(request.query_arguments.page_index)
+async def grid(
+        context,
+        query,
+        row_render=default_row_render,
+        header_render=default_header_render,
+        foot_render=default_foot_render,
+        order_by=None,
+        paginate=20
+):
+    request = context.request
+    db = context.db
+    page_index = int(context.get_query_argument("page_index", "0"))
 
-    all_count = db(query).count()
-    db_rows = db(query).select(limitby=(paginate * page_index, (page_index + 1) * paginate), orderby=order_by)
+    all_count = await db(query).count()
+    db_rows = await db(query).select(
+        limitby=(paginate * page_index, (page_index + 1) * paginate),
+        orderby=order_by
+    )
 
     table_body_rows_html_content = ""
     for r in db_rows:
-        table_body_rows_html_content += row_render(r, db_rows.colnames_fields)
+        table_body_rows_html_content += row_render(r, db_rows.field_names)
 
     table_html_content = f"<div>" \
                          f"  <div>" \
                          f"    <table class='data-grid table'>" \
-                         f"      <thead>{header_render(db_rows.colnames_fields)}</thead>" \
+                         f"      <thead>{header_render(db_rows.field_names)}</thead>" \
                          f"      <tbody>{table_body_rows_html_content}</tbody>" \
                          f"    </table>" \
                          f"  </div>" \

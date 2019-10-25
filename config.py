@@ -18,7 +18,6 @@ PORT = 8000
 APP_NAME = "cms4py"
 APP_VERSION = "2019.10.12"
 STATIC_FILES_ROOT = os.path.join(APP_ROOT, "cms4py", "static")
-STATIC_FILES_URL_PATH = "static"
 DEFAULT_STATIC_FILE_NAME = "index.html"
 
 DB_HOST = "db"

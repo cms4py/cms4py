@@ -1,5 +1,7 @@
 from . import index, user, rest, session_counter
 from .dashboard import index as dashboard_index
+from .dashboard import site
+from .dashboard import user as dashboard_user
 
 routes = [
     (r"/", index.Index),
@@ -13,4 +15,6 @@ routes = [
     (r"/session_counter", session_counter.SessionCounter),
     (r"/dashboard", dashboard_index.Index),
     (r"/dashboard/index", dashboard_index.Index),
+    (r"/dashboard/site/versions", site.Versions),
+    (r"/dashboard/user/all_users", dashboard_user.AllUsers),
 ]

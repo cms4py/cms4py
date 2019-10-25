@@ -3,19 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <title>{{ response.title or "" }}</title>
-    <link rel="icon" href="{{ URL(config.STATIC_FILES_URL_PATH,'favicon.png') }}">
+    <link rel="icon" href="{{ URL('favicon.png') }}">
 
-    <script src="{{ URL(config.STATIC_FILES_URL_PATH,'lib','jquery-3.4.1.min.js',vars=dict(app_version=config.APP_VERSION)) }}"></script>
-
-    <link rel="stylesheet"
-          href="{{ URL(config.STATIC_FILES_URL_PATH,'lib','fontawesome-free-5.11.2-web','css','all.min.css',vars=dict(app_version=config.APP_VERSION)) }}">
-    <link rel="stylesheet"
-          href="{{ URL(config.STATIC_FILES_URL_PATH,'lib','bootstrap-4.3.1-dist','css','bootstrap.min.css',vars=dict(app_version=config.APP_VERSION)) }}">
-    <script src="{{ URL(config.STATIC_FILES_URL_PATH,'lib','bootstrap-4.3.1-dist','js','bootstrap.bundle.min.js',vars=dict(app_version=config.APP_VERSION)) }}"></script>
-    <script src="{{ URL(config.STATIC_FILES_URL_PATH,'lib','vue.js',vars=dict(app_version=config.APP_VERSION)) }}"></script>
+    <script src="{{ URL('lib','jquery-3.4.1.min.js',vars=dict(v=config.APP_VERSION)) }}"></script>
 
     <link rel="stylesheet"
-          href="{{ URL(config.STATIC_FILES_URL_PATH,'css','style.css',vars=dict(app_version=config.APP_VERSION)) }}">
+          href="{{ URL('lib','fontawesome-free-5.11.2-web','css','all.min.css',vars=dict(v=config.APP_VERSION)) }}">
+    <link rel="stylesheet"
+          href="{{ URL('lib','bootstrap-4.3.1-dist','css','bootstrap.min.css',vars=dict(v=config.APP_VERSION)) }}">
+    <script src="{{ URL('lib','bootstrap-4.3.1-dist','js','bootstrap.bundle.min.js',vars=dict(v=config.APP_VERSION)) }}"></script>
+    <script src="{{ URL('lib','vue.js',vars=dict(v=config.APP_VERSION)) }}"></script>
+
+    <link rel="stylesheet"
+          href="{{ URL('css','style.css',vars=dict(v=config.APP_VERSION)) }}">
 
 </head>
 <body>
@@ -38,32 +38,25 @@
 
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
-            <li class="nav-item">
-                <a class="nav-link" href="{{ URL("dashboard","users") }}">{{ _("Users") }}</a>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown"
+                   aria-haspopup="true" aria-expanded="false">
+                    {{ _('Users') }}
+                </a>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" href="{{ URL('dashboard','user','all_users') }}">{{ _('All users') }}</a>
+                    <a class="dropdown-item" href="{{ URL('dashboard','site','versions') }}">{{ _('Versions') }}</a>
+                </div>
             </li>
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown"
                    aria-haspopup="true" aria-expanded="false">
-                    Site
+                    {{ _('Site') }}
                 </a>
                 <div class="dropdown-menu">
                     <a class="dropdown-item" href="/">{{ _('Home') }}</a>
+                    <a class="dropdown-item" href="{{ URL('dashboard','site','versions') }}">{{ _('Versions') }}</a>
                 </div>
-            </li>
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
-                   aria-haspopup="true" aria-expanded="false">
-                    Dropdown
-                </a>
-                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" href="#">Action</a>
-                    <a class="dropdown-item" href="#">Another action</a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="#">Something else here</a>
-                </div>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
             </li>
         </ul>
         <form class="form-inline my-2 my-lg-0">

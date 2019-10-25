@@ -5,7 +5,7 @@ from .routes import routes
 
 routes.append(
     (
-        r"/{}/(.*)".format(config.STATIC_FILES_URL_PATH),
+        r"/(.*)",
         tornado.web.StaticFileHandler,
         dict(
             path=config.STATIC_FILES_ROOT,
