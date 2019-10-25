@@ -4,5 +4,7 @@ cryptography==2.8
 pycparser==2.19
 pydal==20190915.2
 PyMySQL==0.9.2
+python-engineio==3.10.0
+python-socketio==4.3.1
 six==1.12.0
 tornado==6.0.3
