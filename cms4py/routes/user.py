@@ -7,7 +7,7 @@ class Register(RequestContext):
 
     async def get(self):
         await self.render(
-            "user/register.html",
+            "user/register.twig",
             login_name="", email="", phone="", password="",
             nickname=""
         )
@@ -31,7 +31,7 @@ class Register(RequestContext):
         else:
             self.response.alert = self.locale.translate("Failed to register")
             await self.render(
-                "user/register.html"
+                "user/register.twig"
             )
 
 
@@ -39,7 +39,7 @@ class Login(RequestContext):
 
     async def get(self):
         self.response.title = self.locale.translate("Login")
-        await self.render("user/login.html")
+        await self.render("user/login.twig")
 
     async def post(self):
         login_param = self.get_argument("login")
@@ -62,14 +62,14 @@ class Login(RequestContext):
                     self.redirect(URL("user", "profile"))
                     return
         self.response.alert = self.locale.translate("Invalid login, login name or password wrong!")
-        await self.render("user/login.html")
+        await self.render("user/login.twig")
 
 
 class Profile(RequestContext):
 
     @auth.require_login
     async def get(self):
-        await self.render("user/profile.html")
+        await self.render("user/profile.twig")
 
 
 class Logout(RequestContext):
@@ -87,6 +87,6 @@ class AjaxInfo(RequestContext):
 
     async def get(self):
         await self.render(
-            "user/ajax_info.html",
+            "user/ajax_info.twig",
             is_admin=await self.has_membership("admin")
         )

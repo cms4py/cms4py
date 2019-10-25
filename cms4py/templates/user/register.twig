@@ -1,4 +1,4 @@
-{% extends "../layout.html" %}
+{% extends "../layout.twig" %}
 {% autoescape None %}
 {% block body %}
 <div class="container" id="vueapp">
@@ -56,8 +56,7 @@
                 </tbody>
             </table>
             <div>
-                <input type="submit" class="btn btn-primary" value="{{ _(" Register") }}"
-                :disabled="!allFieldsVerified">
+                <input type="submit" class="btn btn-primary" value="{{ _("Register") }}" :disabled="!allFieldsVerified">
                 <a class="btn btn-link" href="{{ URL('user','login') }}">
                     {{ _("Already have an account, click here to login") }}
                 </a>
@@ -75,5 +74,5 @@
     <div class="checking_phone">{{ _('Checking phone') }}</div>
     <div class="phone_exists">{{ _('Phone exists') }}</div>
 </div>
-<script src="{{ URL('js','user_register.js',vars=dict(app_version=config.APP_VERSION)) }}"></script>
+<script src="{{ URL(config.STATIC_FILES_URL_PATH,'js','user_register.js',vars=dict(app_version=config.APP_VERSION)) }}"></script>
 {% end %}

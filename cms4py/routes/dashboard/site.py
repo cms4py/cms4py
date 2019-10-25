@@ -8,4 +8,4 @@ class Versions(RequestContext):
     @auth.require_membership("admin")
     async def get(self):
         self.response.title = self.locale.translate("Versions")
-        await self.render("dashboard/site/versions.html", tornado_version=tornado.version, python_version=sys.version)
+        await self.render("dashboard/site/versions.twig", tornado_version=tornado.version, python_version=sys.version)
