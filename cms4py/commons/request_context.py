@@ -12,9 +12,9 @@ from tornado.concurrent import Future
 import config
 from cms4py.aiomysql_pydal import PyDALCursor
 from cms4py.db import DbConnector
+from . import auth
 from .response import Response
 from .url import URL
-from . import auth
 
 
 class RequestContext(tornado.web.RequestHandler):
