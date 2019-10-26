@@ -64,7 +64,7 @@ class RequestContext(tornado.web.RequestHandler):
 
         key = config.CMS4PY_SESSION_ID_KEY
         self._session_id = self.get_secure_cookie(key) if config.COOKIE_SECRET else self.get_cookie(key)
-        session_record = (await db(db.session.session_id == self.session_id).select()).first()
+        session_record = (await db(db.cms4py_session.session_id == self.session_id).select()).first()
         if session_record:
             session_str = session_record.session_content
             try:
@@ -116,8 +116,8 @@ class RequestContext(tornado.web.RequestHandler):
     async def cleanup(self):
         if self.db:
             if self._session_changed:
-                await self.db.session.update_or_insert(
-                    self.db.session.session_id == self.session_id,
+                await self.db.cms4py_session.update_or_insert(
+                    self.db.cms4py_session.session_id == self.session_id,
                     session_id=self.session_id,
                     session_content=tornado.escape.json_encode(self.session)
                 )

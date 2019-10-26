@@ -8,8 +8,8 @@ class AllUsers(RequestContext):
         self.response.title = self.locale.translate("All users")
         grid = await data_grid.grid(
             self,
-            self.db.user.id > 0,
-            order_by=~self.db.user.id,
+            self.db.member.id > 0,
+            order_by=~self.db.member.id,
             fields=[
                 "id",
                 "login_name",
@@ -27,8 +27,8 @@ class AllGroups(RequestContext):
         self.response.title = self.locale.translate("All groups")
         grid = await data_grid.grid(
             self,
-            self.db.user_group.id > 0,
-            order_by=~self.db.user_group.id
+            self.db.member_group.id > 0,
+            order_by=~self.db.member_group.id
         )
         await self.render("dashboard/user/all_groups.twig", grid=grid)
 
@@ -40,14 +40,14 @@ class Memberships(RequestContext):
 
         grid = await data_grid.grid(
             self,
-            (self.db.user_membership.user == self.db.user.id) &
-            (self.db.user_membership.group == self.db.user_group.id) &
-            (self.db.user.id > 0),
-            order_by=~self.db.user_membership.id,
+            (self.db.membership.user_id == self.db.member.id) &
+            (self.db.membership.group_id == self.db.member_group.id) &
+            (self.db.member.id > 0),
+            order_by=~self.db.membership.id,
             fields=[
-                "user.login_name",
-                "user.email",
-                "user_group.role",
+                "member.login_name",
+                "member.email",
+                "member_group.role",
             ]
         )
         await self.render("dashboard/user/memberships.twig", grid=grid)

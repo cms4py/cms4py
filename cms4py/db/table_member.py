@@ -1,11 +1,12 @@
-from pydal import DAL, Field
-from pydal.validators import IS_NOT_IN_DB, IS_EMAIL, CRYPT, IS_NOT_EMPTY
+from pydal import Field
+from pydal.validators import IS_EMAIL, CRYPT, IS_NOT_EMPTY
+
 from cms4py.aiomysql_pydal import AsyncDAL
 
 
 def define_table(db: AsyncDAL):
     db.define_table(
-        "user",
+        "member",
         Field(
             "login_name",
             label="Login name",

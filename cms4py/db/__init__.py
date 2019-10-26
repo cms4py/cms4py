@@ -1,6 +1,6 @@
 from pydal import DAL
 import config
-from . import table_user, table_session, table_group, table_membership
+from . import table_member, table_session, table_group, table_membership
 from cms4py.aiomysql_pydal import AsyncDAL
 
 
@@ -26,7 +26,7 @@ class DbConnector:
             config.DB_POOR_SIZE
         )
         table_session.define_table(self._async_dal)
-        table_user.define_table(self._async_dal)
+        table_member.define_table(self._async_dal)
         table_group.define_table(self._async_dal)
         table_membership.define_table(self._async_dal)
 

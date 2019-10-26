@@ -7,9 +7,9 @@ async def has_membership(context, role):
         return False
     db = context.db
     return not (await db(
-        (db.user_group.role == role) &
-        (db.user_membership.user == context.current_user["id"]) &
-        (db.user_group.id == db.user_membership.group)
+        (db.member_group.role == role) &
+        (db.membership.user_id == context.current_user["id"]) &
+        (db.member_group.id == db.membership.group_id)
     ).isempty())
 
 
