@@ -5,7 +5,7 @@ from cms4py.aiomysql_pydal import AsyncDAL
 
 def define_table(db: AsyncDAL):
     db.define_table(
-        "member_group",
+        "auth_group",
         Field('role'),
         Field('description'),
     )

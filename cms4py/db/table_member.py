@@ -6,7 +6,7 @@ from cms4py.aiomysql_pydal import AsyncDAL
 
 def define_table(db: AsyncDAL):
     db.define_table(
-        "member",
+        "auth_user",
         Field(
             "login_name",
             label="Login name",

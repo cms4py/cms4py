@@ -6,7 +6,7 @@ async def user_exists_by_field(context: RequestContext, field_name):
     field_value = context.get_argument(field_name, None)
     if field_value:
         db = context.db
-        exists = not await db(db.member[field_name] == field_value).isempty()
+        exists = not await db(db.auth_user[field_name] == field_value).isempty()
         result_data = result.make_result(result.CODE_OK, "OK")
         result_data["exists"] = exists
         return result_data

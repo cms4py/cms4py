@@ -18,14 +18,14 @@ class Register(RequestContext):
         email = self.get_argument("email")
         phone = self.get_argument("phone")
         password = self.get_argument("password")
-        password = db.member.password.requires(password)[0]
+        password = db.auth_user.password.requires(password)[0]
         nickname = self.get_argument("nickname")
 
-        if (await self.db.member.insert(
+        if (await self.db.auth_user.insert(
                 login_name=login_name, email=email, phone=phone, password=password,
                 nickname=nickname
         )):
-            user_record = (await db(db.member.login_name == login_name).select()).first()
+            user_record = (await db(db.auth_user.login_name == login_name).select()).first()
             self.set_current_user(user_record)
             self.redirect(URL("user", "profile"))
         else:
@@ -46,12 +46,12 @@ class Login(RequestContext):
         password = self.get_argument("password")
         db = self.db
         user_record = (await db(
-            (db.member.login_name == login_param) |
-            (db.member.email == login_param) |
-            (db.member.phone == login_param)
+            (db.auth_user.login_name == login_param) |
+            (db.auth_user.email == login_param) |
+            (db.auth_user.phone == login_param)
         ).select()).first()
         if user_record:
-            transcode = db.member.password.requires(password)[0]
+            transcode = db.auth_user.password.requires(password)[0]
             if transcode == user_record.password:
                 self.set_current_user(user_record)
                 _next = self.get_query_argument("_next", None)
