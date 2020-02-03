@@ -35,3 +35,5 @@ CMS4PY_SESSION_ID_KEY = "cms4py_session_id"
 
 TRANSLATIONS_FOLDER = os.path.join(APP_ROOT, "cms4py", "languages")
 TEMPLATES_FOLDER = os.path.join(APP_ROOT, "cms4py", "templates")
+
+DEFAULT_AIO_LIB = 'aiohttp'
