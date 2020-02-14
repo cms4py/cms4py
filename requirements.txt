@@ -1,4 +1,0 @@
-aiomysql==0.0.20
-pydal==20190915.2
-python-socketio==4.3.1
-tornado==6.0.3

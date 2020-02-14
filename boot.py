@@ -1,5 +1,4 @@
-import cms4py
-from app import routes
-import config
+import uvicorn
+from cms4py import asgi
 
-routes.config(cms4py.create_server(config.DEFAULT_AIO_LIB)).start()
+uvicorn.run(asgi.application)
