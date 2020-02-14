@@ -1,4 +1,4 @@
-from .handlers import Cms4pyRequestHandler
+from cms4py.core.servers import Cms4pyRequestHandler
 
 
 class Cms4pyAbstractServer:

@@ -7,10 +7,10 @@ def create_server(aio_lib='aiohttp') -> Cms4pyAbstractServer:
     :return:
     """
     if aio_lib == 'aiohttp':
-        from .core.aiohttp_server import AioHttpServer
+        from .core.servers.aiohttp_server import AioHttpServer
         server = AioHttpServer()
     elif aio_lib == "tornado":
-        from .core.tornado_server import TornadoServer
+        from .core.servers.tornado_server import TornadoServer
         server = TornadoServer()
     else:
         raise Exception(f"aio lib '{aio_lib}' is not supported.")

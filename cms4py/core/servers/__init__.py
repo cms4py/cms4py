@@ -1,10 +1,12 @@
 from cms4py.core.handlers import Cms4pyRequestHandler
-from .servers import Cms4pyAbstractServer
 
 
-class TornadoServer(Cms4pyAbstractServer):
+class Cms4pyAbstractServer:
     def add_get_route(self, route, handler: Cms4pyRequestHandler):
-        super().add_get_route(route, handler)
+        pass
 
     def add_post_route(self, route, handler: Cms4pyRequestHandler):
-        super().add_post_route(route, handler)
+        pass
+
+    def start(self):
+        pass
