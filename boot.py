@@ -1,4 +1,5 @@
 import uvicorn
-from cms4py import asgi
+import cms4py
 
-uvicorn.run(asgi.application)
+
+uvicorn.run(cms4py.application)
