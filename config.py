@@ -1,10 +1,12 @@
 import os
 
+SERVER_VERSION = '2020.02.15'
 SERVER_ROOT = os.path.dirname(os.path.abspath(__file__))
 APP_ROOT = os.path.join(SERVER_ROOT, "app")
 CONTROLLERS_ROOT = os.path.join(APP_ROOT, "controllers")
 STATIC_FILES_ROOT = os.path.join(APP_ROOT, "static")
 VIEWS_ROOT = os.path.join(APP_ROOT, 'views')
+LANGUAGES_ROOT = os.path.join(APP_ROOT, 'languages')
 
 APP_NAME = "cms4py"
 
@@ -20,3 +22,4 @@ LOG_LEVEL = 10
 
 DEFAULT_CONTROLLER = "default"
 DEFAULT_ACTION = 'index'
+APP_VERSION = '2020.02.15'

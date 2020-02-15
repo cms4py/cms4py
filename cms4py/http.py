@@ -1,6 +1,7 @@
 from jinja2 import FileSystemLoader, Environment
 import config
 import asyncio
+from . import url
 
 jinja2_env = Environment(loader=FileSystemLoader(config.VIEWS_ROOT))
 
@@ -14,15 +15,28 @@ class Request:
         self._scope = scope
         self._receive = receive
         pass
+
+    async def form(self):
+        pass
+
+    @property
+    def method(self):
+        return self._scope['method']
+
     pass
 
 
 class Response:
-    def __init__(self, send):
+    def __init__(self, request, send):
         self._send = send
         self._content_type = b"text/html"
         self._header_sent = False
         self._body = b''
+        self._request = request
+
+        self.alert = None
+        self.success = None
+        self.title = None
         pass
 
     def _get_headers(self):
@@ -61,5 +75,9 @@ class Response:
         self._body = data
 
     async def render(self, view: str, **kwargs):
+        kwargs['URL'] = url.URL
+        kwargs['config'] = config
+        kwargs['response'] = self
+        kwargs['request'] = self._request
         data = await asyncio.get_running_loop().run_in_executor(None, jinja2_render, view, kwargs)
         await self.end(data)

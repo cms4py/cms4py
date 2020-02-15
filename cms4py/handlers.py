@@ -6,7 +6,7 @@ import config
 from . import mime_types
 from . import http
 from . import file_helper
-from . import cached_ast_objects
+from .cache import cached_ast_objects
 
 
 async def handle_static_file_request(scope, send) -> bool:
@@ -55,6 +55,7 @@ async def handle_dynamic_request(scope, receive, send) -> bool:
         controller_local_scope = {}
         exec(controller_object, controller_global_scope, controller_local_scope)
         if action_name in controller_local_scope:
-            await controller_local_scope[action_name](http.Request(scope, receive), http.Response(send))
+            req = http.Request(scope, receive)
+            await controller_local_scope[action_name](req, http.Response(req, send))
             data_sent = True
     return data_sent
