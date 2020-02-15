@@ -47,8 +47,12 @@ async def handle_dynamic_request(scope, receive, send) -> bool:
     request_path: str = scope['path']
     tokens = request_path.split("/")
     tokens_len = len(tokens)
-    controller_name = tokens[1] if tokens_len >= 2 else 'default'
-    action_name = tokens[2] if tokens_len >= 3 else "index"
+    controller_name = config.DEFAULT_CONTROLLER
+    if tokens_len >= 2:
+        controller_name = tokens[1] or config.DEFAULT_CONTROLLER
+    action_name = config.DEFAULT_ACTION
+    if tokens_len >= 3:
+        action_name = tokens[2] or config.DEFAULT_ACTION
     controller_file = os.path.join(
         config.CONTROLLERS_ROOT, f"{controller_name}.py"
     )

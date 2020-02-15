@@ -11,6 +11,6 @@ async def index(request: http.Request, response: http.Response):
     })
     await response._send({
         'type': 'http.response.body',
-        'body': b"Hello World 12",
+        'body': b"Hello World",
     })
     pass

@@ -16,3 +16,6 @@ DEBUG       10
 NOTSET      0
 """
 LOG_LEVEL = 10
+
+DEFAULT_CONTROLLER = "default"
+DEFAULT_ACTION = 'index'
