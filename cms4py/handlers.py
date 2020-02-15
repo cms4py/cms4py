@@ -5,15 +5,8 @@ import config
 
 from . import mime_types
 from . import http
-
-
-def block_read_file(file_path) -> bytes:
-    if os.path.exists(file_path) and os.path.isfile(file_path):
-        f = open(file_path)
-        file_content = f.read()
-        f.close()
-        return file_content.encode('utf-8') if isinstance(file_content, str) else file_content
-    return None
+from . import file_helper
+from . import cached_ast_objects
 
 
 async def handle_static_file_request(scope, send) -> bool:
@@ -22,9 +15,9 @@ async def handle_static_file_request(scope, send) -> bool:
     """
     data_sent = False
     file_path = f"{config.STATIC_FILES_ROOT}{scope['path']}"
-    file_content = await asyncio.get_running_loop().run_in_executor(
-        None, block_read_file, file_path
-    )
+    file_content = None
+    if await file_helper.file_exists(file_path) and await file_helper.isfile(file_path):
+        file_content = await file_helper.read_file_async(file_path)
     if file_content:
         mime_type = mime_types.get_mime_type(file_path)
         await send({
@@ -56,15 +49,8 @@ async def handle_dynamic_request(scope, receive, send) -> bool:
     controller_file = os.path.join(
         config.CONTROLLERS_ROOT, f"{controller_name}.py"
     )
-    current_loop = asyncio.get_running_loop()
-    if await current_loop.run_in_executor(None, os.path.exists, controller_file) and \
-            await current_loop.run_in_executor(None, os.path.isfile, controller_file):
-        controller_file_content = await current_loop.run_in_executor(None, block_read_file, controller_file)
-        controller_object = compile(
-            controller_file_content,
-            controller_file,
-            "exec"
-        )
+    controller_object = await cached_ast_objects.get_ast_object(controller_file)
+    if controller_object:
         controller_global_scope = {}
         controller_local_scope = {}
         exec(controller_object, controller_global_scope, controller_local_scope)
