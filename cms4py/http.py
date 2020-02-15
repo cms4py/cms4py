@@ -1,3 +1,14 @@
+from jinja2 import FileSystemLoader, Environment
+import config
+import asyncio
+
+jinja2_env = Environment(loader=FileSystemLoader(config.VIEWS_ROOT))
+
+
+def jinja2_render(view, args) -> bytes:
+    return jinja2_env.get_template(view).render(args).encode("utf-8")
+
+
 class Request:
     def __init__(self, scope, receive):
         self._scope = scope
@@ -11,6 +22,7 @@ class Response:
         self._send = send
         self._content_type = b"text/html"
         self._header_sent = False
+        self._body = b''
         pass
 
     def _get_headers(self):
@@ -27,6 +39,10 @@ class Response:
     def content_type(self, value: bytes):
         self._content_type = value
 
+    @property
+    def body(self):
+        return self._body
+
     async def send_header(self, status=200):
         await self._send({
             'type': 'http.response.start',
@@ -35,10 +51,15 @@ class Response:
         })
         self._header_sent = True
 
-    async def write(self, data: bytes):
+    async def end(self, data: bytes):
         if not self._header_sent:
             await self.send_header()
         await self._send({
             "type": "http.response.body",
             "body": data
         })
+        self._body = data
+
+    async def render(self, view: str, **kwargs):
+        data = await asyncio.get_running_loop().run_in_executor(None, jinja2_render, view, kwargs)
+        await self.end(data)
