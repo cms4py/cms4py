@@ -7,6 +7,9 @@ async def application(scope, receive, send):
         data_sent = await handlers.handle_static_file_request(scope, send)
 
     if not data_sent:
+        data_sent = await handlers.handle_dynamic_request(scope, receive, send)
+
+    if not data_sent:
         await send({
             'type': 'http.response.start',
             'status': 404,
