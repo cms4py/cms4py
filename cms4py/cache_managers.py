@@ -93,5 +93,4 @@ class PythonAstObjectCacheManager(FileCacheManager):
         wrapper = await super().wrap_data(key)
         if wrapper and wrapper.data:
             wrapper.data = compile(wrapper.data, key, "exec")
-        print("reload ast")
         return wrapper

@@ -1,5 +1,6 @@
 import asyncio
 import re
+from . import translator
 
 from jinja2 import FileSystemLoader, Environment
 
@@ -17,12 +18,17 @@ class Request:
     def __init__(self, scope, receive):
         self._scope = scope
         self._receive = receive
+
+        self._method = self._scope['method']
+        self._path = self._scope['path']
         self._raw_headers = self._scope['headers'] if 'headers' in self._scope else []
         self._headers = {}
         self._copy_headers()
         self._raw_accept_languages = self.get_header(b'accept-language')
         self._accept_languages = re.compile(b"[a-z]{2}-[A-Z]{2}").findall(self._raw_accept_languages)
-        self._language = config.LANGUAGE or (self._accept_languages[0] if len(self._accept_languages) > 0 else 'en-us')
+
+        lang: bytes = config.LANGUAGE or (self._accept_languages[0] if len(self._accept_languages) > 0 else 'en-US')
+        self._language = lang.decode("utf-8")
         pass
 
     def _copy_headers(self):
@@ -35,7 +41,7 @@ class Request:
         pass
 
     @property
-    def language(self):
+    def language(self) -> str:
         return self._language
 
     @property
@@ -61,18 +67,23 @@ class Request:
 
     @property
     def method(self):
-        return self._scope['method']
+        return self._method
+
+    @property
+    def path(self):
+        return self._path
 
     pass
 
 
 class Response:
-    def __init__(self, request, send):
+    def __init__(self, request: Request, send):
         self._send = send
         self._content_type = b"text/html"
         self._header_sent = False
         self._body = b''
-        self._request = request
+        self._request: Request = request
+        self._language_dict = None
 
         self.alert = None
         self.success = None
@@ -114,10 +125,25 @@ class Response:
         })
         self._body = data
 
+    async def translate_async(self, words):
+        return await translator.translate(words, self._request.language)
+
+    async def _load_language_dict(self):
+        if not self._language_dict:
+            self._language_dict = await translator.get_language_dict(self._request.language)
+
+    def translate(self, words):
+        if self._language_dict and words in self._language_dict:
+            words = self._language_dict[words]
+        return words
+
     async def render(self, view: str, **kwargs):
+        await self._load_language_dict()
         kwargs['URL'] = url.URL
         kwargs['config'] = config
         kwargs['response'] = self
         kwargs['request'] = self._request
+        kwargs["_"] = self.translate
+        kwargs["T"] = self.translate
         data = await asyncio.get_running_loop().run_in_executor(None, jinja2_render, view, kwargs)
         await self.end(data)
