@@ -7,6 +7,7 @@ CONTROLLERS_ROOT = os.path.join(APP_ROOT, "controllers")
 STATIC_FILES_ROOT = os.path.join(APP_ROOT, "static")
 VIEWS_ROOT = os.path.join(APP_ROOT, 'views')
 LANGUAGES_ROOT = os.path.join(APP_ROOT, 'languages')
+LANGUAGE = None  # "zh-cn", "en-us"
 
 APP_NAME = "cms4py"
 

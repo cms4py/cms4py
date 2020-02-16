@@ -1,6 +1,9 @@
-from jinja2 import FileSystemLoader, Environment
-import config
 import asyncio
+import re
+
+from jinja2 import FileSystemLoader, Environment
+
+import config
 from . import url
 
 jinja2_env = Environment(loader=FileSystemLoader(config.VIEWS_ROOT))
@@ -14,7 +17,44 @@ class Request:
     def __init__(self, scope, receive):
         self._scope = scope
         self._receive = receive
+        self._raw_headers = self._scope['headers'] if 'headers' in self._scope else []
+        self._headers = {}
+        self._copy_headers()
+        self._raw_accept_languages = self.get_header(b'accept-language')
+        self._accept_languages = re.compile(b"[a-z]{2}-[A-Z]{2}").findall(self._raw_accept_languages)
+        self._language = config.LANGUAGE or (self._accept_languages[0] if len(self._accept_languages) > 0 else 'en-us')
         pass
+
+    def _copy_headers(self):
+        for pair in self._raw_headers:
+            if len(pair) == 2:
+                key = pair[0]
+                if key not in self._headers:
+                    self._headers[key] = []
+                self._headers[key].append(pair[1])
+        pass
+
+    @property
+    def language(self):
+        return self._language
+
+    @property
+    def accept_languages(self):
+        return self._accept_languages
+
+    @property
+    def headers(self):
+        return self._headers
+
+    def header(self, key):
+        return self.headers[key] if key in self.headers else None
+
+    def get_header(self, key, default_value=None):
+        values = self.header(key)
+        value = default_value
+        if values and len(values) > 0:
+            value = values[0]
+        return value
 
     async def form(self):
         pass

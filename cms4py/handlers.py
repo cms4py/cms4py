@@ -1,12 +1,10 @@
-import asyncio
 import os
 
 import config
-
-from . import mime_types
-from . import http
 from . import file_helper
-from .cache import cached_ast_objects
+from . import http
+from . import mime_types
+from .cache_managers import PythonAstObjectCacheManager
 
 
 async def handle_static_file_request(scope, send) -> bool:
@@ -49,13 +47,12 @@ async def handle_dynamic_request(scope, receive, send) -> bool:
     controller_file = os.path.join(
         config.CONTROLLERS_ROOT, f"{controller_name}.py"
     )
-    controller_object = await cached_ast_objects.get_ast_object(controller_file)
+    controller_object = await PythonAstObjectCacheManager.get_instance().get_data(controller_file)
     if controller_object:
-        controller_global_scope = {}
-        controller_local_scope = {}
-        exec(controller_object, controller_global_scope, controller_local_scope)
-        if action_name in controller_local_scope:
+        controller_scope = {}
+        exec(controller_object, controller_scope)
+        if action_name in controller_scope:
             req = http.Request(scope, receive)
-            await controller_local_scope[action_name](req, http.Response(req, send))
+            await controller_scope[action_name](req, http.Response(req, send))
             data_sent = True
     return data_sent
