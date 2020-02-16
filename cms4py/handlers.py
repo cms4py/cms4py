@@ -54,6 +54,8 @@ async def handle_dynamic_request(scope, receive, send) -> bool:
         if action_name in controller_scope:
             req = http.Request(scope, receive)
             await req.parse_form()
-            await controller_scope[action_name](req, http.Response(req, send))
+            res = http.Response(req, send)
+            await res._load_language_dict()
+            await controller_scope[action_name](req, res)
             data_sent = True
     return data_sent

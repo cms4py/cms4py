@@ -78,6 +78,7 @@ class JsonFileCacheManager(FileCacheManager):
         wrapper = await super().wrap_data(key)
         if wrapper and wrapper.data:
             wrapper.data = json.loads(wrapper.data)
+            Cms4pyLog.get_instance().debug(f"Load json file {key}")
         return wrapper
 
 

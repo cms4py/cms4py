@@ -1,7 +1,17 @@
 {% extends "layout.html" %}
 {% block body %}
-    <form method="post" enctype="application/x-www-form-urlencoded">
-        <input type="text" name="name">
-        <input type="submit">
+    <form method="post" enctype="multipart/form-data">
+        <div>
+            <input type="text" name="name" value="yunp">
+        </div>
+        <div>
+            <input type="number" name="age" value="10">
+        </div>
+        <div>
+            <input type="file" name="txt">
+        </div>
+        <div>
+            <input type="submit">
+        </div>
     </form>
 {% endblock %}

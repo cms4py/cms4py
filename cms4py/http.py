@@ -1,10 +1,10 @@
 import asyncio
 import re
-from . import translator
 
 from jinja2 import FileSystemLoader, Environment
 
 import config
+from . import translator
 from .helpers import url_helper, log_helper
 
 jinja2_env = Environment(loader=FileSystemLoader(config.VIEWS_ROOT))
@@ -121,8 +121,33 @@ class Request:
                 if self.content_type == b'application/x-www-form-urlencoded':
                     self._body_vars = url_helper.parse_url_pairs(data['body'])
                 elif self.content_type.startswith(b"multipart/form-data"):
-                    # TODO
-                    pass
+                    boundary_search_result = re.search(b"multipart/form-data; boundary=(.+)", self.content_type)
+                    if boundary_search_result:
+                        boundary = boundary_search_result.group(1)
+                        if 'body' in data and data['body']:
+                            body_results = re.compile(boundary + b"\r\n([\s\S]*?)\r\n\r\n([\s\S]*?)\r\n", re.M).findall(
+                                data['body']
+                            )
+                            if body_results:
+                                for body_result in body_results:
+                                    head = body_result[0]
+                                    content = body_result[1]
+                                    name_result = re.search(b'Content-Disposition: form-data; name="([^"]+)"', head,
+                                                            re.M)
+                                    if name_result:
+                                        name = name_result.group(1)
+                                        if name not in self._body_vars:
+                                            self._body_vars[name] = []
+                                        file_name_result = re.search(b' filename="([^"]+)"', head, re.M)
+                                        file_name = file_name_result.group(1) if file_name_result else None
+                                        if not file_name:
+                                            self._body_vars[name].append(content)
+                                        else:
+                                            file_object = {'name': name, 'filename': file_name, 'content': content}
+                                            content_type_result = re.search(b'Content-Type: (.*)', head, re.M)
+                                            if content_type_result:
+                                                file_object['content-type'] = content_type_result.group(1)
+                                            self._body_vars[name].append(file_object)
                 else:
                     log_helper.Cms4pyLog.get_instance().warning(f"Unsupported content-type {self.content_type}")
             else:
@@ -203,7 +228,6 @@ class Response:
         return words
 
     async def render(self, view: str, **kwargs):
-        await self._load_language_dict()
         kwargs['URL'] = url_helper.URL
         kwargs['config'] = config
         kwargs['response'] = self
