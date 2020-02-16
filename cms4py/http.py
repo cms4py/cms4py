@@ -5,7 +5,7 @@ from . import translator
 from jinja2 import FileSystemLoader, Environment
 
 import config
-from . import url
+from .helpers import url_helper, log_helper
 
 jinja2_env = Environment(loader=FileSystemLoader(config.VIEWS_ROOT))
 
@@ -21,6 +21,7 @@ class Request:
 
         self._method = self._scope['method']
         self._path = self._scope['path']
+        self._query_string = self._scope['query_string']
         self._raw_headers = self._scope['headers'] if 'headers' in self._scope else []
         self._headers = {}
         self._copy_headers()
@@ -29,6 +30,11 @@ class Request:
 
         lang: bytes = config.LANGUAGE or (self._accept_languages[0] if len(self._accept_languages) > 0 else 'en-US')
         self._language = lang.decode("utf-8")
+
+        self._query_vars = {}
+        self._body_vars = {}
+
+        self._content_type = None
         pass
 
     def _copy_headers(self):
@@ -52,17 +58,76 @@ class Request:
     def headers(self):
         return self._headers
 
-    def header(self, key):
-        return self.headers[key] if key in self.headers else None
+    @property
+    def query_string(self):
+        return self._query_string
 
-    def get_header(self, key, default_value=None):
-        values = self.header(key)
-        value = default_value
+    def _get_first_value_of_array_map(self, data, key):
+        values = data[key] if (data and key in data) else None
+        value = None
         if values and len(values) > 0:
             value = values[0]
         return value
 
-    async def form(self):
+    def get_headers(self, key: bytes):
+        """
+        Get all values by key
+        :param key:
+        :return:
+        """
+        return self.headers[key] if key in self.headers else None
+
+    def get_header(self, key: bytes, default_value=None):
+        """
+        Get first value by key
+        :param key:
+        :param default_value:
+        :return:
+        """
+        return self._get_first_value_of_array_map(self.headers, key) or default_value
+
+    @property
+    def content_type(self) -> bytes:
+        if not self._content_type:
+            self._content_type = self.get_header(b"content-type")
+        return self._content_type
+
+    @property
+    def query_vars(self):
+        return self._query_vars
+
+    def get_query_vars(self, key: bytes) -> list:
+        return self.query_vars[key] if key in self.query_vars else None
+
+    def get_query_var(self, key: bytes, default_value=None) -> bytes:
+        return self._get_first_value_of_array_map(self.query_vars, key) or default_value
+
+    @property
+    def body_vars(self):
+        return self._body_vars
+
+    def get_body_vars(self, key: bytes) -> list:
+        return self._body_vars[key] if key in self._body_vars else None
+
+    def get_body_var(self, key: bytes, default_value=None) -> bytes:
+        return self._get_first_value_of_array_map(self.body_vars, key) or default_value
+
+    async def parse_form(self):
+        if self.query_string:
+            self._query_vars = url_helper.parse_url_pairs(self.query_string)
+        if self.method == "POST":
+            data = await self._receive()
+            if self.content_type:
+                if self.content_type == b'application/x-www-form-urlencoded':
+                    self._body_vars = url_helper.parse_url_pairs(data['body'])
+                elif self.content_type.startswith(b"multipart/form-data"):
+                    # TODO
+                    pass
+                else:
+                    log_helper.Cms4pyLog.get_instance().warning(f"Unsupported content-type {self.content_type}")
+            else:
+                log_helper.Cms4pyLog.get_instance().warning("content-type is None")
+            pass
         pass
 
     @property
@@ -139,7 +204,7 @@ class Response:
 
     async def render(self, view: str, **kwargs):
         await self._load_language_dict()
-        kwargs['URL'] = url.URL
+        kwargs['URL'] = url_helper.URL
         kwargs['config'] = config
         kwargs['response'] = self
         kwargs['request'] = self._request

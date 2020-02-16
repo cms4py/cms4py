@@ -1,5 +1,5 @@
 import config, os
-from . import file_helper
+from .helpers import file_helper
 from . import cache_managers
 
 

@@ -1,7 +1,7 @@
 import os
 
 import config
-from . import file_helper
+from .helpers import file_helper
 from . import http
 from . import mime_types
 from .cache_managers import PythonAstObjectCacheManager
@@ -53,6 +53,7 @@ async def handle_dynamic_request(scope, receive, send) -> bool:
         exec(controller_object, controller_scope)
         if action_name in controller_scope:
             req = http.Request(scope, receive)
+            await req.parse_form()
             await controller_scope[action_name](req, http.Response(req, send))
             data_sent = True
     return data_sent

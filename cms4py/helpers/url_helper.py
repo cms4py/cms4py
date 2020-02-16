@@ -28,3 +28,17 @@ def URL(*parts, vars=None, host=None, host_name=None, port=80, scheme="https://"
     if host_name:
         url = f"{scheme}{host_name}:{port}{url}"
     return url
+
+
+def parse_url_pairs(query_string: bytes):
+    params = {}
+    tokens = query_string.split(b"&")
+    for t in tokens:
+        kv = t.split(b"=")
+        if len(kv) == 2:
+            k = kv[0]
+            v = kv[1]
+            if k not in params:
+                params[k] = []
+            params[k].append(v)
+    return params

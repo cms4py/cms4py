@@ -1,6 +1,7 @@
 {% extends "layout.html" %}
 {% block body %}
-    Hello World
-
-    {{ T("Hello") }}
+    <form method="post" enctype="application/x-www-form-urlencoded">
+        <input type="text" name="name">
+        <input type="submit">
+    </form>
 {% endblock %}

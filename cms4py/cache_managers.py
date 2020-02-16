@@ -1,6 +1,7 @@
 import json
 
-from . import file_helper
+from .helpers import file_helper
+from cms4py.helpers.log_helper import Cms4pyLog
 
 
 class CachedDataWrapper:
@@ -23,7 +24,7 @@ class BaseCacheManager:
         wrapper = await self.wrap_data(key)
         if wrapper:
             self._cache_map[key] = wrapper
-        return wrapper.data
+        return wrapper.data if wrapper else None
 
     async def get_data(self, key):
         if key in self._cache_map:
@@ -93,4 +94,5 @@ class PythonAstObjectCacheManager(FileCacheManager):
         wrapper = await super().wrap_data(key)
         if wrapper and wrapper.data:
             wrapper.data = compile(wrapper.data, key, "exec")
+            Cms4pyLog.get_instance().debug(f"Compile source {key}")
         return wrapper

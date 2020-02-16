@@ -1,6 +1,6 @@
 from cms4py import http
-from cms4py.log_helper import log
 
 
 async def index(request: http.Request, response: http.Response):
+    print(request.get_body_var(b"name"))
     await response.render("index.html", name="Hello")
