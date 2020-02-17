@@ -35,7 +35,21 @@ class Request:
         self._body_vars = {}
 
         self._content_type = None
+        self._args = []
+        self._parse_args()
         pass
+
+    def _parse_args(self):
+        tokens = self.path.split("/")
+        if len(tokens) >= 4:
+            self._args = tokens[3:]
+
+    @property
+    def args(self):
+        return self._args
+
+    def get_arg(self, index):
+        return self._args[index] if len(self._args) > index else None
 
     def _copy_headers(self):
         for pair in self._raw_headers:
