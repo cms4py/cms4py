@@ -1,7 +1,8 @@
+import datetime
 import json
 
-from .helpers import file_helper
 from cms4py.helpers.log_helper import Cms4pyLog
+from .helpers import file_helper
 
 
 class CachedDataWrapper:
@@ -16,21 +17,29 @@ class BaseCacheManager:
     def __init__(self) -> None:
         super().__init__()
         self._cache_map = {}
+        self._wrap_data_callback = None
+        self._will_reload_callback = None
 
     async def wrap_data(self, key) -> CachedDataWrapper:
         raise NotImplementedError()
 
     async def cache_data(self, key):
-        wrapper = await self.wrap_data(key)
+        if not self._wrap_data_callback:
+            self._wrap_data_callback = self.wrap_data
+
+        wrapper = await self._wrap_data_callback(key)
         if wrapper:
             self._cache_map[key] = wrapper
         return wrapper.data if wrapper else None
 
-    async def get_data(self, key):
+    async def get_data(self, key, wrap_data_callback=None, will_reload_callback=None):
+        self._wrap_data_callback = wrap_data_callback or self.wrap_data
+        self._will_reload_callback = will_reload_callback or self.will_reload
+
         if key in self._cache_map:
             wrapper: CachedDataWrapper = self._cache_map[key]
             result = wrapper.data
-            if await self.will_reload(wrapper, key):
+            if await self._will_reload_callback(wrapper, key):
                 result = await self.cache_data(key)
         else:
             result = await self.cache_data(key)
@@ -38,6 +47,9 @@ class BaseCacheManager:
 
     async def will_reload(self, wrapper: CachedDataWrapper, key: str) -> bool:
         raise NotImplementedError()
+
+    def clear(self):
+        self._cache_map.clear()
 
 
 class FileCacheManager(BaseCacheManager):
@@ -97,3 +109,19 @@ class PythonAstObjectCacheManager(FileCacheManager):
             wrapper.data = compile(wrapper.data, key, "exec")
             Cms4pyLog.get_instance().debug(f"Compile source {key}")
         return wrapper
+
+
+class PageCacheManager(BaseCacheManager):
+    __instance = None
+
+    @staticmethod
+    def get_instance():
+        if not PageCacheManager.__instance:
+            PageCacheManager.__instance = PageCacheManager()
+        return PageCacheManager.__instance
+
+    async def wrap_data(self, key) -> CachedDataWrapper:
+        raise NotImplementedError()
+
+    async def will_reload(self, wrapper: CachedDataWrapper, key: str) -> bool:
+        return datetime.datetime.now().timestamp() > wrapper.timestamp

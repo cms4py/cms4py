@@ -1,12 +1,12 @@
-import os
 import asyncio
+import os
 
 
 def read_file(file_path) -> bytes:
-    f = open(file_path)
+    f = open(file_path, "rb")
     file_content = f.read()
     f.close()
-    return file_content.encode('utf-8') if isinstance(file_content, str) else file_content
+    return file_content
 
 
 async def read_file_async(file_path) -> bytes:

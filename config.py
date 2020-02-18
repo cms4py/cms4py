@@ -7,7 +7,7 @@ CONTROLLERS_ROOT = os.path.join(APP_ROOT, "controllers")
 STATIC_FILES_ROOT = os.path.join(APP_ROOT, "static")
 VIEWS_ROOT = os.path.join(APP_ROOT, 'views')
 LANGUAGES_ROOT = os.path.join(APP_ROOT, 'languages')
-LANGUAGE = None  # "zh-cn", "en-us"
+LANGUAGE = None  # "zh-CN", "en-US"
 
 APP_NAME = "cms4py"
 
@@ -24,3 +24,5 @@ LOG_LEVEL = 10
 DEFAULT_CONTROLLER = "default"
 DEFAULT_ACTION = 'index'
 APP_VERSION = '2020.02.15'
+
+GLOBAL_CHARSET = 'utf-8'

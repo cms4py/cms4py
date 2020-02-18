@@ -1,10 +1,10 @@
 import asyncio
-import re
+import re, datetime
 
 from jinja2 import FileSystemLoader, Environment
 
 import config
-from . import translator
+from . import translator, cache_managers
 from .helpers import url_helper, log_helper
 
 jinja2_env = Environment(loader=FileSystemLoader(config.VIEWS_ROOT))
@@ -73,7 +73,7 @@ class Request:
         return self._headers
 
     @property
-    def query_string(self):
+    def query_string(self) -> bytes:
         return self._query_string
 
     def _get_first_value_of_array_map(self, data, key):
@@ -185,6 +185,7 @@ class Response:
         self._send = send
         self._content_type = b"text/html"
         self._header_sent = False
+        self._body_sent = False
         self._body = b''
         self._request: Request = request
         self._language_dict = None
@@ -199,6 +200,10 @@ class Response:
             [b"content-type", self._content_type]
         ]
         return result
+
+    @property
+    def body_sent(self):
+        return self._body_sent
 
     @property
     def content_type(self) -> bytes:
@@ -228,6 +233,7 @@ class Response:
             "body": data
         })
         self._body = data
+        self._body_sent = True
 
     async def translate_async(self, words):
         return await translator.translate(words, self._request.language)
@@ -250,3 +256,33 @@ class Response:
         kwargs["T"] = self.translate
         data = await asyncio.get_running_loop().run_in_executor(None, jinja2_render, view, kwargs)
         await self.end(data)
+
+
+def cache(expire=3600, key=None):
+    """
+    :param expire: In seconds
+    :param key:
+    :return:
+    """
+
+    def wrapper(f):
+        async def inner(req: Request, res: Response):
+            nonlocal key
+            if not key:
+                key = req.path
+                if req.query_string:
+                    key += f"?{req.query_string.decode(config.GLOBAL_CHARSET)}"
+            nonlocal expire
+
+            async def wrap_data_callback(cache_key) -> cache_managers.CachedDataWrapper:
+                await f(req, res)
+                log_helper.Cms4pyLog.get_instance().debug(f"Cache page {cache_key}")
+                return cache_managers.CachedDataWrapper(res.body, datetime.datetime.now().timestamp() + expire)
+
+            cached_data = await cache_managers.PageCacheManager.get_instance().get_data(key, wrap_data_callback)
+            if not res.body_sent:
+                await res.end(cached_data)
+
+        return inner
+
+    return wrapper
