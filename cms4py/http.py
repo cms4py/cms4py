@@ -215,7 +215,7 @@ class Request:
         return self._method
 
     @property
-    def path(self):
+    def path(self) -> str:
         return self._path
 
     pass
@@ -344,20 +344,20 @@ def cache(expire=3600, key=None):
     """
 
     def wrapper(f):
+
         async def inner(req: Request, res: Response):
-            nonlocal key
-            if not key:
-                key = req.path
+            _key = key
+            if not _key:
+                _key = req.path
                 if req.query_string:
-                    key += f"?{req.query_string.decode(config.GLOBAL_CHARSET)}"
-            nonlocal expire
+                    _key += f"?{req.query_string.decode(config.GLOBAL_CHARSET)}"
 
             async def wrap_data_callback(cache_key) -> cache_managers.CachedDataWrapper:
                 await f(req, res)
                 log_helper.Cms4pyLog.get_instance().debug(f"Cache page {cache_key}")
                 return cache_managers.CachedDataWrapper(res.body, datetime.datetime.now().timestamp() + expire)
 
-            cached_data = await cache_managers.PageCacheManager.get_instance().get_data(key, wrap_data_callback)
+            cached_data = await cache_managers.PageCacheManager.get_instance().get_data(_key, wrap_data_callback)
             if not res.body_sent:
                 await res.end(cached_data)
 
