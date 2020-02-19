@@ -322,7 +322,7 @@ class Response:
             b"</html>")
         pass
 
-    async def render(self, view: str, **kwargs):
+    async def render_string(self, view: str, **kwargs) -> bytes:
         kwargs['URL'] = url_helper.URL
         kwargs['config'] = config
         kwargs['response'] = self
@@ -330,7 +330,10 @@ class Response:
         kwargs["_"] = self.translate
         kwargs["T"] = self.translate
         data = await asyncio.get_running_loop().run_in_executor(None, jinja2_render, view, kwargs)
-        await self.end(data)
+        return data
+
+    async def render(self, view: str, **kwargs):
+        await self.end(await self.render_string(view, **kwargs))
 
 
 def cache(expire=3600, key=None):
