@@ -49,13 +49,11 @@ async def handle_dynamic_request(scope, receive, send) -> bool:
     )
     controller_object = await PythonAstObjectCacheManager.get_instance().get_data(controller_file)
     if controller_object:
-        controller_scope = {}
-        exec(controller_object, controller_scope)
-        if action_name in controller_scope:
+        if action_name in controller_object:
             req = http.Request(scope, receive)
             await req.parse_form()
             res = http.Response(req, send)
             await res._load_language_dict()
-            await controller_scope[action_name](req, res)
+            await controller_object[action_name](req, res)
             data_sent = True
     return data_sent

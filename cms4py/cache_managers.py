@@ -110,7 +110,10 @@ class PythonAstObjectCacheManager(FileCacheManager):
     async def wrap_data(self, key) -> CachedDataWrapper:
         wrapper = await super().wrap_data(key)
         if wrapper and wrapper.data:
-            wrapper.data = compile(wrapper.data, key, "exec")
+            scope = {}
+            ast_object = compile(wrapper.data, key, "exec")
+            exec(ast_object, scope)
+            wrapper.data = scope
             Cms4pyLog.get_instance().debug(f"Compile source {key}")
         return wrapper
 
