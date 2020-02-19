@@ -26,9 +26,11 @@ class Request:
         self._headers = {}
         self._copy_headers()
         self._raw_accept_languages = self.get_header(b'accept-language')
-        self._accept_languages = re.compile(b"[a-z]{2}-[A-Z]{2}").findall(self._raw_accept_languages)
+        self._accept_languages = re.compile(b"[a-z]{2}-[A-Z]{2}").findall(
+            self._raw_accept_languages
+        ) if self._raw_accept_languages else []
 
-        lang: bytes = config.LANGUAGE or (self._accept_languages[0] if len(self._accept_languages) > 0 else 'en-US')
+        lang: bytes = config.LANGUAGE or (self._accept_languages[0] if len(self._accept_languages) > 0 else b'en-US')
         self._language = lang.decode("utf-8")
 
         self._query_vars = {}
@@ -286,7 +288,7 @@ class Response:
             await self.send_header()
         await self._send({
             "type": "http.response.body",
-            "body": data
+            "body": data,
         })
         self._body = data
         self._body_sent = True
@@ -302,6 +304,23 @@ class Response:
         if self._language_dict and words in self._language_dict:
             words = self._language_dict[words]
         return words
+
+    async def redirect(self, target: str, primary=False):
+        url = target.encode(config.GLOBAL_CHARSET)
+        status = 302 if not primary else 301
+        self.add_header(b'location', url)
+        await self.send_header(status)
+        await self.end(
+            b"<html lang=\"en\">"
+            b"  <head>"
+            b"      <meta charset=\"UTF-8\">"
+            b"      <title>Redirecting</title>"
+            b"  </head>"
+            b"  <body>"
+            b"      Redirecting to <a href='" + url + b"'>" + url + b"</a>" +
+            b"  </body>"
+            b"</html>")
+        pass
 
     async def render(self, view: str, **kwargs):
         kwargs['URL'] = url_helper.URL
