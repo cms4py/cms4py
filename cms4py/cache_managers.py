@@ -49,7 +49,11 @@ class BaseCacheManager:
         raise NotImplementedError()
 
     def clear(self):
-        self._cache_map.clear()
+        self._cache_map = {}
+
+    @property
+    def cache_map(self):
+        return self._cache_map
 
 
 class FileCacheManager(BaseCacheManager):
@@ -125,3 +129,19 @@ class PageCacheManager(BaseCacheManager):
 
     async def will_reload(self, wrapper: CachedDataWrapper, key: str) -> bool:
         return datetime.datetime.now().timestamp() > wrapper.timestamp
+
+
+class SessionCacheManager(BaseCacheManager):
+    __instance = None
+
+    @staticmethod
+    def get_instance():
+        if not SessionCacheManager.__instance:
+            SessionCacheManager.__instance = SessionCacheManager()
+        return SessionCacheManager.__instance
+
+    async def will_reload(self, wrapper: CachedDataWrapper, key: str) -> bool:
+        return False
+
+    async def wrap_data(self, key) -> CachedDataWrapper:
+        return CachedDataWrapper({}, datetime.datetime.now().timestamp())

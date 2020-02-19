@@ -9,6 +9,7 @@ VIEWS_ROOT = os.path.join(APP_ROOT, 'views')
 LANGUAGES_ROOT = os.path.join(APP_ROOT, 'languages')
 LANGUAGE = None  # "zh-CN", "en-US"
 
+SERVER_NAME = b'cms4py'
 APP_NAME = "cms4py"
 
 """
@@ -26,3 +27,4 @@ DEFAULT_ACTION = 'index'
 APP_VERSION = '2020.02.15'
 
 GLOBAL_CHARSET = 'utf-8'
+CMS4PY_SESSION_ID_KEY = b"cms4py_session_id"

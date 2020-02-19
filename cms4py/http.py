@@ -1,4 +1,4 @@
-import asyncio
+import asyncio, uuid
 import re, datetime
 
 from jinja2 import FileSystemLoader, Environment
@@ -37,6 +37,9 @@ class Request:
         self._content_type = None
         self._args = []
         self._parse_args()
+        self._cookie = None
+        self._cookie_map = None
+        self._session_id: bytes = b''
         pass
 
     def _parse_args(self):
@@ -105,6 +108,42 @@ class Request:
         if not self._content_type:
             self._content_type = self.get_header(b"content-type")
         return self._content_type
+
+    @property
+    def cookie(self) -> bytes:
+        if not self._cookie:
+            self._cookie = self.get_header(b'cookie')
+        return self._cookie
+
+    def get_cookie(self, key: bytes, default_value=None) -> bytes:
+        if not self._cookie_map:
+            self._cookie_map = {}
+            cookie = self.cookie
+            if cookie:
+                tokens = cookie.split(b"; ")
+                for t in tokens:
+                    kv = t.split(b"=")
+                    if len(kv) == 2:
+                        self._cookie_map[kv[0]] = kv[1]
+        return self._cookie_map[key] if key in self._cookie_map else default_value
+
+    @property
+    def session_id(self) -> bytes:
+        self._session_id = self.get_cookie(config.CMS4PY_SESSION_ID_KEY, None)
+        if not self._session_id:
+            self._session_id = uuid.uuid4().hex.encode(config.GLOBAL_CHARSET)
+        return self._session_id
+
+    async def session(self):
+        return await cache_managers.SessionCacheManager.get_instance().get_data(self.session_id)
+
+    async def get_session(self, key, default_value=None):
+        session_dict = await cache_managers.SessionCacheManager.get_instance().get_data(self.session_id)
+        return session_dict[key] if key in session_dict else default_value
+
+    async def set_session(self, key, value):
+        session_dict = await cache_managers.SessionCacheManager.get_instance().get_data(self.session_id)
+        session_dict[key] = value
 
     @property
     def query_vars(self):
@@ -183,7 +222,7 @@ class Request:
 class Response:
     def __init__(self, request: Request, send):
         self._send = send
-        self._content_type = b"text/html"
+        self._content_type = None
         self._header_sent = False
         self._body_sent = False
         self._body = b''
@@ -193,13 +232,29 @@ class Response:
         self.alert = None
         self.success = None
         self.title = None
+        self._headers_map = {}
+
+        self.content_type = b'text/html'
+        self.add_header(b'server', config.SERVER_NAME)
+        self.add_set_cookie(config.CMS4PY_SESSION_ID_KEY, self._request.session_id)
         pass
 
     def _get_headers(self):
-        result = [
-            [b"content-type", self._content_type]
-        ]
+        result = []
+        for key in self._headers_map:
+            for v in self._headers_map[key]:
+                result.append([key, v])
         return result
+
+    def add_header(self, key: bytes, value: bytes):
+        if key not in self._headers_map:
+            self._headers_map[key] = []
+        self._headers_map[key].append(value)
+
+    def add_set_cookie(self, name: bytes, value: bytes, max_age: int = 604800, path: bytes = b'/'):
+        self.add_header(b'set-cookie',
+                        f"{name.decode(config.GLOBAL_CHARSET)}={value.decode(config.GLOBAL_CHARSET)}; max-age={max_age}; path={path.decode(config.GLOBAL_CHARSET)}".encode(
+                            config.GLOBAL_CHARSET))
 
     @property
     def body_sent(self):
@@ -212,6 +267,7 @@ class Response:
     @content_type.setter
     def content_type(self, value: bytes):
         self._content_type = value
+        self._headers_map[b"content-type"] = [value]
 
     @property
     def body(self):
