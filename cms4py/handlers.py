@@ -28,6 +28,7 @@ async def handle_static_file_request(scope, send) -> bool:
         await send({
             'type': 'http.response.body',
             'body': file_content,
+            'more_body': False
         })
         data_sent = True
     return data_sent
