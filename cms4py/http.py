@@ -42,12 +42,17 @@ class Request:
         self._cookie = None
         self._cookie_map = None
         self._session_id: bytes = b''
+        self._body: bytes = b''
         pass
 
     def _parse_args(self):
         tokens = self.path.split("/")
         if len(tokens) >= 4:
             self._args = tokens[3:]
+
+    @property
+    def body(self) -> bytes:
+        return self._body
 
     @property
     def args(self):
@@ -171,38 +176,45 @@ class Request:
         if self.query_string:
             self._query_vars = url_helper.parse_url_pairs(self.query_string)
         if self.method == "POST":
-            data = await self._receive()
+            while True:
+                message = await self._receive()
+                self._body += message["body"] if 'body' in message else b''
+                if "more_body" not in message or not message["more_body"]:
+                    break
             if self.content_type:
                 if self.content_type == b'application/x-www-form-urlencoded':
-                    self._body_vars = url_helper.parse_url_pairs(data['body'])
+                    self._body_vars = url_helper.parse_url_pairs(self._body)
                 elif self.content_type.startswith(b"multipart/form-data"):
                     boundary_search_result = re.search(b"multipart/form-data; boundary=(.+)", self.content_type)
                     if boundary_search_result:
                         boundary = boundary_search_result.group(1)
-                        if 'body' in data and data['body']:
-                            body_results = re.compile(boundary + b"\r\n([\s\S]*?)\r\n\r\n([\s\S]*?)\r\n", re.M).findall(
-                                data['body']
-                            )
+                        if self._body:
+                            body_results = self.body.split(b'\r\n--' + boundary)
                             if body_results:
                                 for body_result in body_results:
-                                    head = body_result[0]
-                                    content = body_result[1]
-                                    name_result = re.search(b'Content-Disposition: form-data; name="([^"]+)"', head,
-                                                            re.M)
-                                    if name_result:
-                                        name = name_result.group(1)
-                                        if name not in self._body_vars:
-                                            self._body_vars[name] = []
-                                        file_name_result = re.search(b' filename="([^"]+)"', head, re.M)
-                                        file_name = file_name_result.group(1) if file_name_result else None
-                                        if not file_name:
-                                            self._body_vars[name].append(content)
-                                        else:
-                                            file_object = {'name': name, 'filename': file_name, 'content': content}
-                                            content_type_result = re.search(b'Content-Type: (.*)', head, re.M)
-                                            if content_type_result:
-                                                file_object['content-type'] = content_type_result.group(1)
-                                            self._body_vars[name].append(file_object)
+                                    split_index = body_result.find(b'\r\n\r\n')
+                                    if split_index != -1:
+                                        head = body_result[:split_index]
+                                        content = body_result[split_index + 4:]
+                                        name_result = re.search(b'Content-Disposition: form-data; name="([^"]+)"', head,
+                                                                re.M)
+                                        if name_result:
+                                            name = name_result.group(1)
+                                            if name not in self._body_vars:
+                                                self._body_vars[name] = []
+                                            file_name_result = re.search(b' filename="([^"]+)"', head, re.M)
+                                            file_name = file_name_result.group(1) if file_name_result else None
+                                            if not file_name:
+                                                self._body_vars[name].append(content)
+                                            else:
+                                                file_object = {'name': name, 'filename': file_name, 'content': content}
+                                                content_type_result = re.search(b'Content-Type: (.*)', head, re.M)
+                                                if content_type_result:
+                                                    file_object['content-type'] = content_type_result.group(1)
+                                                self._body_vars[name].append(file_object)
+                                        pass
+                                    else:
+                                        break
                 else:
                     log_helper.Cms4pyLog.get_instance().warning(f"Unsupported content-type {self.content_type}")
             else:
@@ -211,7 +223,7 @@ class Request:
         pass
 
     @property
-    def method(self):
+    def method(self) -> str:
         return self._method
 
     @property
