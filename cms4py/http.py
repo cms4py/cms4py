@@ -301,6 +301,7 @@ class Response:
         await self._send({
             "type": "http.response.body",
             "body": data,
+            'more_body': False
         })
         self._body = data
         self._body_sent = True
