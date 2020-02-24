@@ -253,6 +253,10 @@ class Response:
         self.add_set_cookie(config.CMS4PY_SESSION_ID_KEY, self._request.session_id)
         pass
 
+    @property
+    def header_sent(self):
+        return self._header_sent
+
     def _get_headers(self):
         result = []
         for key in self._headers_map:

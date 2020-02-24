@@ -56,5 +56,7 @@ async def handle_dynamic_request(scope, receive, send) -> bool:
             res = http.Response(req, send)
             await res._load_language_dict()
             await controller_object[action_name](req, res)
+            if not res.body_sent:
+                await res.end(b'This page is empty.')
             data_sent = True
     return data_sent
