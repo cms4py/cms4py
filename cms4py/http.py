@@ -43,7 +43,15 @@ class Request:
         self._cookie_map = None
         self._session_id: bytes = b''
         self._body: bytes = b''
+        self._uri = None
         pass
+
+    def uri(self):
+        if not self._uri:
+            self._uri = self.path
+            if self.query_string:
+                self._uri += self.query_string.decode(config.GLOBAL_CHARSET)
+        return self._uri
 
     def _parse_args(self):
         tokens = self.path.split("/")
