@@ -46,6 +46,7 @@ class Request:
         self._uri = None
         pass
 
+    @property
     def uri(self):
         if not self._uri:
             self._uri = self.path
@@ -354,6 +355,7 @@ class Response:
         kwargs['request'] = self._request
         kwargs["_"] = self.translate
         kwargs["T"] = self.translate
+        kwargs['session'] = await self._request.session()
         data = await asyncio.get_running_loop().run_in_executor(None, jinja2_render, view, kwargs)
         return data
 

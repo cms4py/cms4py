@@ -148,3 +148,11 @@ class SessionCacheManager(BaseCacheManager):
 
     async def wrap_data(self, key) -> CachedDataWrapper:
         return CachedDataWrapper({}, datetime.datetime.now().timestamp())
+
+    async def set_current_user(self, session_id: bytes, user):
+        session = await self.get_data(session_id)
+        session['current_user'] = user
+
+    async def get_current_user(self, session_id):
+        session = await self.get_data(session_id)
+        return session['current_user'] if 'current_user' in session else None
