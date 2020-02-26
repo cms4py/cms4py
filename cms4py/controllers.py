@@ -39,9 +39,6 @@ class Controller:
         return self
 
     async def __call__(self, request, response):
-        if not await self._pre_execute(request, response):
-            return
-        if not await self._execute(request, response):
-            return
-        if not await self._post_execute(request, response):
-            return
+        await self._pre_execute(request, response)
+        await self._execute(request, response)
+        await self._post_execute(request, response)

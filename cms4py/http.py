@@ -181,6 +181,14 @@ class Request:
     def get_body_var(self, key: bytes, default_value=None) -> bytes:
         return self._get_first_value_of_array_map(self.body_vars, key) or default_value
 
+    def get_var(self, key: bytes, default_value=None):
+        if self.method == "GET":
+            return self.get_query_var(key, default_value)
+        elif self.method == 'POST':
+            return self.get_body_var(key, default_value) or self.get_query_var(key, default_value)
+        else:
+            return None
+
     async def parse_form(self):
         if self.query_string:
             self._query_vars = url_helper.parse_url_pairs(self.query_string)
@@ -191,7 +199,7 @@ class Request:
                 if "more_body" not in message or not message["more_body"]:
                     break
             if self.content_type:
-                if self.content_type == b'application/x-www-form-urlencoded':
+                if self.content_type.startswith(b'application/x-www-form-urlencoded'):
                     self._body_vars = url_helper.parse_url_pairs(self._body)
                 elif self.content_type.startswith(b"multipart/form-data"):
                     boundary_search_result = re.search(b"multipart/form-data; boundary=(.+)", self.content_type)
@@ -309,6 +317,8 @@ class Response:
         self._header_sent = True
 
     async def end(self, data: bytes):
+        if self._body_sent:
+            return
         if not self._header_sent:
             await self.send_header()
         await self._send({
@@ -360,6 +370,8 @@ class Response:
         return data
 
     async def render(self, view: str, **kwargs):
+        if self._body_sent:
+            return
         await self.end(await self.render_string(view, **kwargs))
 
 
