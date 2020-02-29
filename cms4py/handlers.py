@@ -1,4 +1,4 @@
-import os
+import os, inspect
 
 import config
 from .helpers import file_helper
@@ -55,7 +55,11 @@ async def handle_dynamic_request(scope, receive, send) -> bool:
             await req.parse_form()
             res = http.Response(req, send)
             await res._load_language_dict()
-            await controller_object[action_name](req, res)
+            action = controller_object[action_name]
+            if inspect.isclass(action):
+                await action()(req, res)
+            else:
+                await action(req, res)
             if not res.body_sent:
                 await res.end(b'')
             data_sent = True
