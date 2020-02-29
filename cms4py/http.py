@@ -316,6 +316,21 @@ class Response:
         })
         self._header_sent = True
 
+    async def write(self, data: bytes):
+        """
+        This function is always used to support long-live connection, if you want to render a page at once, you should
+        use function 'end' instead.
+        :param data:
+        :return:
+        """
+        if not self._header_sent:
+            await self.send_header()
+        await self._send({
+            "type": "http.response.body",
+            "body": data,
+            'more_body': True
+        })
+
     async def end(self, data: bytes):
         if self._body_sent:
             return
