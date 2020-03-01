@@ -1,17 +1,10 @@
 import asyncio, uuid
 import re, datetime
 
-from jinja2 import FileSystemLoader, Environment
-
 import config
 from . import translator, cache_managers
 from .helpers import url_helper, log_helper
-
-jinja2_env = Environment(loader=FileSystemLoader(config.VIEWS_ROOT))
-
-
-def jinja2_render(view, args) -> bytes:
-    return jinja2_env.get_template(view).render(args).encode("utf-8")
+from . import template_engine
 
 
 class Request:
@@ -381,7 +374,7 @@ class Response:
         kwargs["_"] = self.translate
         kwargs["T"] = self.translate
         kwargs['session'] = await self._request.session()
-        data = await asyncio.get_running_loop().run_in_executor(None, jinja2_render, view, kwargs)
+        data = await template_engine.TemplateEngine.get_instance().render(view, **kwargs)
         return data
 
     async def render(self, view: str, **kwargs):
