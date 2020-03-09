@@ -1,3 +1,6 @@
+from cms4py import http
+
+
 class Controller:
     def __init__(self) -> None:
         super().__init__()
@@ -8,11 +11,11 @@ class Controller:
         self._response = None
 
     @property
-    def request(self):
+    def request(self) -> http.Request:
         return self._request
 
     @property
-    def response(self):
+    def response(self) -> http.Response:
         return self._response
 
     async def pre_execute(self, request, response):

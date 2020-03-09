@@ -11,6 +11,7 @@ class Request:
     def __init__(self, scope, receive):
         self._scope = scope
         self._receive = receive
+        self._protocol = scope['type']
 
         self._method = self._scope['method']
         self._path = self._scope['path']
@@ -37,7 +38,33 @@ class Request:
         self._session_id: bytes = b''
         self._body: bytes = b''
         self._uri = None
+        self._host = self.get_header(b"host")
+        self._client = self._scope['client']
+        self._client_ip = self._client[0]
+        self._client_port = self._client[1]
+        self._controller = None
+        self._action = None
         pass
+
+    @property
+    def controller(self):
+        return self._controller
+
+    @property
+    def action(self):
+        return self._action
+
+    @property
+    def host(self):
+        return self._host
+
+    @property
+    def client_ip(self):
+        return self._client_ip
+
+    @property
+    def protocol(self):
+        return self._protocol
 
     @property
     def uri(self):
@@ -60,7 +87,7 @@ class Request:
     def args(self):
         return self._args
 
-    def get_arg(self, index):
+    def get_arg(self, index) -> str:
         return self._args[index] if len(self._args) > index else None
 
     def _copy_headers(self):
@@ -103,7 +130,7 @@ class Request:
         """
         return self.headers[key] if key in self.headers else None
 
-    def get_header(self, key: bytes, default_value=None):
+    def get_header(self, key: bytes, default_value=None) -> bytes:
         """
         Get first value by key
         :param key:

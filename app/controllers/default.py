@@ -5,6 +5,7 @@ from cms4py.helpers.url_helper import URL
 
 
 async def index(request: http.Request, response: http.Response):
+    print(request._scope['client'])
     await response.render("index.html")
 
 

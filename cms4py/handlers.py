@@ -56,6 +56,8 @@ async def handle_dynamic_request(scope, receive, send) -> bool:
             res = http.Response(req, send)
             await res._load_language_dict()
             action = controller_object[action_name]
+            req._controller = controller_name
+            req._action = action_name
             if inspect.isclass(action):
                 await action()(req, res)
             else:
