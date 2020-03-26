@@ -1,5 +1,6 @@
 import asyncio, uuid
 import re, datetime
+from urllib.parse import unquote
 
 import config
 from . import translator, cache_managers
@@ -11,7 +12,7 @@ class Request:
     def __init__(self, scope, receive):
         self._scope = scope
         self._receive = receive
-        self._protocol = scope['type']
+        self._protocol = scope['scheme']
 
         self._method = self._scope['method']
         self._path = self._scope['path']
@@ -55,8 +56,11 @@ class Request:
         return self._action
 
     @property
-    def host(self):
+    def host(self) -> bytes:
         return self._host
+
+    def host_as_str(self, charset=config.GLOBAL_CHARSET) -> str:
+        return self.host.decode(charset) if self.host else ''
 
     @property
     def client_ip(self):
@@ -71,6 +75,7 @@ class Request:
         if not self._uri:
             self._uri = self.path
             if self.query_string:
+                self._uri += "?"
                 self._uri += self.query_string.decode(config.GLOBAL_CHARSET)
         return self._uri
 
@@ -110,6 +115,14 @@ class Request:
     @property
     def headers(self):
         return self._headers
+
+    def is_mobile(self):
+        user_agent = self.get_header(b"user-agent")
+        if user_agent:
+            return user_agent.find(b"iPhone") != -1 or \
+                   user_agent.find(b"iPad") != -1 or \
+                   user_agent.find(b"Android") != -1
+        return False
 
     @property
     def query_string(self) -> bytes:
@@ -173,11 +186,11 @@ class Request:
     async def session(self):
         return await cache_managers.SessionCacheManager.get_instance().get_data(self.session_id)
 
-    async def get_session(self, key, default_value=None):
+    async def get_session(self, key: str, default_value=None):
         session_dict = await cache_managers.SessionCacheManager.get_instance().get_data(self.session_id)
         return session_dict[key] if key in session_dict else default_value
 
-    async def set_session(self, key, value):
+    async def set_session(self, key: str, value):
         session_dict = await cache_managers.SessionCacheManager.get_instance().get_data(self.session_id)
         session_dict[key] = value
 
@@ -188,7 +201,7 @@ class Request:
     def get_query_vars(self, key: bytes) -> list:
         return self.query_vars[key] if key in self.query_vars else None
 
-    def get_query_var(self, key: bytes, default_value=None) -> bytes:
+    def get_query_var(self, key: bytes, default_value=b'') -> bytes:
         return self._get_first_value_of_array_map(self.query_vars, key) or default_value
 
     @property
@@ -198,16 +211,23 @@ class Request:
     def get_body_vars(self, key: bytes) -> list:
         return self._body_vars[key] if key in self._body_vars else None
 
-    def get_body_var(self, key: bytes, default_value=None) -> bytes:
+    def get_body_var(self, key: bytes, default_value=b'') -> bytes:
         return self._get_first_value_of_array_map(self.body_vars, key) or default_value
 
-    def get_var(self, key: bytes, default_value=None):
+    def get_var(self, key: bytes, default_value=b'') -> bytes:
         if self.method == "GET":
             return self.get_query_var(key, default_value)
         elif self.method == 'POST':
             return self.get_body_var(key, default_value) or self.get_query_var(key, default_value)
         else:
-            return None
+            return default_value
+
+    def get_var_as_str(self, key: bytes, default_value='', charset=config.GLOBAL_CHARSET) -> str:
+        var_bytes = self.get_var(key)
+        if var_bytes:
+            return unquote(var_bytes.decode(charset))
+        else:
+            return default_value
 
     async def parse_form(self):
         if self.query_string:
