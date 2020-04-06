@@ -1,4 +1,5 @@
 import asyncio, uuid
+import json
 import re, datetime
 from urllib.parse import unquote
 
@@ -67,11 +68,11 @@ class Request:
         return self._client_ip
 
     @property
-    def protocol(self):
+    def protocol(self) -> str:
         return self._protocol
 
     @property
-    def uri(self):
+    def uri(self) -> str:
         if not self._uri:
             self._uri = self.path
             if self.query_string:
@@ -122,6 +123,17 @@ class Request:
             return user_agent.find(b"iPhone") != -1 or \
                    user_agent.find(b"iPad") != -1 or \
                    user_agent.find(b"Android") != -1
+        return False
+
+    def runs_in_wx(self):
+        """
+        是否在微信中运行
+        :param request:
+        :return:
+        """
+        user_agent = self.get_header(b"user-agent")
+        if user_agent:
+            return user_agent.find(b"MicroMessenger") != -1
         return False
 
     @property
@@ -273,7 +285,9 @@ class Request:
                                     else:
                                         break
                 else:
-                    log_helper.Cms4pyLog.get_instance().warning(f"Unsupported content-type {self.content_type}")
+                    log_helper.Cms4pyLog.get_instance().info(
+                        f"Request content-type is {self.content_type}, we do not parse"
+                    )
             else:
                 log_helper.Cms4pyLog.get_instance().warning("content-type is None")
             pass
@@ -383,6 +397,9 @@ class Response:
         })
         self._body = data
         self._body_sent = True
+
+    async def json(self, data):
+        await self.end(json.dumps(data).encode(config.GLOBAL_CHARSET))
 
     async def translate_async(self, words):
         return await translator.translate(words, self._request.language)
