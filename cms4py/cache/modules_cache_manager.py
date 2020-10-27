@@ -1,5 +1,3 @@
-
-
 from cms4py.cache.base_cache_manager import BaseCacheManager
 from cms4py.cache.base_cache_manager import CachedDataWrapper
 from cms4py.utils import aiofile
@@ -40,7 +38,7 @@ class ModulesCacheManager(BaseCacheManager):
             # 获取文件时间戳
             t = await aiofile.getmtime(m_file)
         except ModuleNotFoundError:
-            Cms4pyLog.get_instance().warning(f"Module {key} not found")
+            Cms4pyLog.get_instance().debug(f"Module {key} not found")
         return CachedDataWrapper(m, t)
 
     async def will_reload(self, wrapper: CachedDataWrapper, key: str) -> bool:
