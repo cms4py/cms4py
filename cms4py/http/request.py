@@ -345,20 +345,13 @@ class Request:
             if self.content_type:
                 # 如果是 application/x-www-form-urlencoded 编码方式，
                 # 则尝试以 URL 参数对的方式解析
-                if self.content_type.startswith(
-                        b'application/x-www-form-urlencoded'
-                ):
-                    self._body_vars = url_helper.parse_url_pairs(
-                        self._body
-                    )
+                if self.content_type.startswith(b'application/x-www-form-urlencoded'):
+                    self._body_vars = url_helper.parse_url_pairs(self._body)
                 # 如果是 multipart/form-data 则当成表单数据解析，可用
                 # 于处理文件上传请求
                 elif self.content_type.startswith(b"multipart/form-data"):
                     # 该正则用于取出数据分割符
-                    boundary_search_result = re.search(
-                        b"multipart/form-data; boundary=(.+)",
-                        self.content_type
-                    )
+                    boundary_search_result = re.search(b"multipart/form-data; boundary=(.+)", self.content_type)
                     if boundary_search_result:
                         # 取出分割符
                         boundary = boundary_search_result.group(1)
@@ -373,14 +366,12 @@ class Request:
                                     # 头部和内容以 \r\n\r\n 分开，
                                     # 头部是字符串，描述该数据的信息
                                     # 内容部分是二进制数据
-                                    split_index = body_result \
-                                        .find(b'\r\n\r\n')
+                                    split_index = body_result.find(b'\r\n\r\n')
                                     if split_index != -1:
                                         # 获取头部信息字符串
                                         head = body_result[:split_index]
                                         # 获取内容
-                                        content = body_result[
-                                                  split_index + 4:]
+                                        content = body_result[split_index + 4:]
                                         # 取出该字段的名称
                                         name_result = re.search(
                                             b'Content-Disposition: form-data; name="([^"]+)"',
@@ -391,41 +382,27 @@ class Request:
                                             if name not in self._body_vars:
                                                 self._body_vars[name] = []
                                             # 如果是文件，则取出该字段的文件名
-                                            file_name_result = re.search(
-                                                b' filename="([^"]+)"',
-                                                head, re.M
-                                            )
-                                            file_name = file_name_result \
-                                                .group(1) if \
-                                                file_name_result else None
+                                            file_name_result = re.search(b' filename="([^"]+)"', head, re.M)
+                                            file_name = file_name_result.group(1) if file_name_result else None
                                             if not file_name:
                                                 # 如果不是文件，值为普通字符串
-                                                self._body_vars[name] \
-                                                    .append(content)
+                                                self._body_vars[name].append(content)
                                             else:
                                                 file_object = {
                                                     'name': name,
                                                     'filename': file_name,
                                                     'content': content
                                                 }
-                                                content_type_result = \
-                                                    re.search(
-                                                        b'Content-Type: (.*)',
-                                                        head, re.M
-                                                    )
+                                                content_type_result = re.search(b'Content-Type: (.*)', head, re.M)
                                                 if content_type_result:
-                                                    file_object[
-                                                        'content-type'
-                                                    ] = content_type_result.group(1)
+                                                    file_object['content-type'] = content_type_result.group(1)
                                                 # 如果是文件，则值为文件对象
                                                 self._body_vars[name].append(file_object)
                                         pass
                                     else:
                                         break
                 else:
-                    Cms4pyLog.get_instance().info(
-                        f"Request content-type is {self.content_type}, we do not parse"
-                    )
+                    Cms4pyLog.get_instance().info(f"Request content-type is {self.content_type}, we do not parse")
             else:
                 Cms4pyLog.get_instance().warning("content-type is None")
             pass
@@ -474,9 +451,7 @@ class Request:
         )
         # 如果不存在，生成新的 Session ID
         if not self._session_id:
-            self._session_id = uuid.uuid4().hex.encode(
-                config.GLOBAL_CHARSET
-            )
+            self._session_id = uuid.uuid4().hex.encode(config.GLOBAL_CHARSET)
         return self._session_id
 
     async def session(self):
@@ -484,9 +459,7 @@ class Request:
         根据 Session ID 获得对应的 Session 数据
         :return:
         """
-        return await SessionCacheManager.get_instance().get_data(
-            self.session_id
-        )
+        return await SessionCacheManager.get_instance().get_data(self.session_id)
 
     async def get_session(self, key: str, default_value=None):
         """
@@ -495,10 +468,8 @@ class Request:
         :param default_value:
         :return:
         """
-        session_dict = await SessionCacheManager.get_instance() \
-            .get_data(self.session_id)
-        return session_dict[key] \
-            if key in session_dict else default_value
+        session_dict = await SessionCacheManager.get_instance().get_data(self.session_id)
+        return session_dict[key] if key in session_dict else default_value
 
     async def set_session(self, key: str, value):
         """
@@ -507,6 +478,5 @@ class Request:
         :param value:
         :return:
         """
-        session_dict = await SessionCacheManager.get_instance() \
-            .get_data(self.session_id)
+        session_dict = await SessionCacheManager.get_instance().get_data(self.session_id)
         session_dict[key] = value
