@@ -1,4 +1,3 @@
-
 import config
 import re, uuid
 from cms4py.utils.log import Cms4pyLog
@@ -82,6 +81,17 @@ class Request:
         # 用于记录 session_id
         self._session_id = b''
         pass
+
+    @property
+    def scope(self):
+        return self._scope
+
+    @property
+    def receive(self):
+        """
+        Get the asgi receive function
+        """
+        return self._receive
 
     @property
     def controller(self):

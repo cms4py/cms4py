@@ -1,4 +1,3 @@
-
 import config
 from cms4py.http.request import Request
 from cms4py.utils import translator
@@ -34,6 +33,13 @@ class Response:
         # 用于存放语言表
         self._language_dict = None
         pass
+
+    @property
+    def send(self):
+        """
+        Get the asgi send function
+        """
+        return self._send
 
     @property
     def header_sent(self):
