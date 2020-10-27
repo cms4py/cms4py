@@ -1,0 +1,29 @@
+<!-- 第8章/cms4py_first_generation/app/views/students.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>所有学生</title>
+</head>
+<body>
+<table border="1">
+    <thead>
+    <tr>
+        <th>id</th>
+        <th>名字</th>
+        <th>年龄</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for s in students %}
+    <tr>
+        <td>{{ s.id }}</td>
+        <td>{{ s.name }}</td>
+        <td>{{ s.age }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+</body>
+</html>
