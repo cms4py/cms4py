@@ -39,7 +39,7 @@ class ModulesCacheManager(BaseCacheManager):
             t = await aiofile.getmtime(m_file)
         except ModuleNotFoundError:
             Cms4pyLog.get_instance().debug(f"Module {key} not found")
-        return CachedDataWrapper(m, t)
+        return CachedDataWrapper(m, t) if m else None
 
     async def will_reload(self, wrapper: CachedDataWrapper, key: str) -> bool:
         return_value = False
