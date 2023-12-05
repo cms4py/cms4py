@@ -50,7 +50,7 @@ async def handle_static_file_request(scope, send) -> bool:
         if if_modified_since_value_bytes:
             if if_modified_since_value_bytes == file_timestamp_http_time_bytes:
                 # 发送 304 状态码
-                await send_304(send, mime_type, file_timestamp_http_time_bytes)
+                await response_tpls.send_304(send, mime_type, file_timestamp_http_time_bytes)
                 data_sent = True
         if not data_sent:
             await send({
