@@ -112,7 +112,7 @@ class Request:
         return self._body
 
     @property
-    def args(self):
+    def args(self) -> list:
         return self._args
 
     def get_arg(self, index) -> str:
