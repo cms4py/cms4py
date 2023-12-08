@@ -382,6 +382,10 @@ class Response:
 
     @property
     def body_sent(self):
+        """
+        Indicates whether the body has been sent
+        :return:
+        """
         return self._body_sent
 
     @property
