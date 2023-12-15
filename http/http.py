@@ -340,6 +340,7 @@ class Response:
         self._body = b''
         self._request: Request = request
         self._language_dict = None
+        self._status_code = None
 
         self.alert = None
         self.success = None
@@ -350,6 +351,14 @@ class Response:
         self.add_header(b'server', config.SERVER_NAME)
         self.add_set_cookie(config.CMS4PY_SESSION_ID_KEY, self._request.session_id)
         pass
+
+    @property
+    def status_code(self):
+        return self._status_code
+
+    @status_code.setter
+    def status_code(self, value):
+        self._status_code = value
 
     @property
     def header_sent(self):
@@ -428,7 +437,7 @@ class Response:
         if self._body_sent:
             return
         if not self._header_sent:
-            await self.send_header()
+            await self.send_header(self.status_code or 200)
         await self._send({
             "type": "http.response.body",
             "body": data,
