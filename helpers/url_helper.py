@@ -16,7 +16,7 @@ def URL(*parts, vars=None, host=None, host_name=None, port=80, scheme="https://"
     if vars:
         filtered_vars = dict()
         for k, v in vars.items():
-            if v:
+            if v is not None:
                 filtered_vars[k] = v
         vars = filtered_vars
     if vars:
