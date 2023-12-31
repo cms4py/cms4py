@@ -47,11 +47,13 @@ class Request:
         self._uri = None
         self._host = self.get_header(b"host")
         self._x_forwarded_host = self.get_header(b"x-forwarded-host")
+        self._x_forwarded_for = self.get_header(b"x-forwarded-for")
         self._client = self._scope['client']
         self._client_ip = self._client[0]
         self._client_port = self._client[1]
         self._controller = None
         self._action = None
+        self._client_real_ip = None
 
     @property
     def controller(self):
@@ -86,8 +88,23 @@ class Request:
         return self.host.decode(charset) if self.host else ''
 
     @property
-    def client_ip(self):
+    def client_ip(self) -> str:
         return self._client_ip
+
+    @property
+    def x_forwarded_for(self) -> bytes:
+        return self._x_forwarded_for
+
+    def get_client_real_ip(self) -> str:
+        if not self._client_real_ip:
+            while True:
+                if self.x_forwarded_for:
+                    self._client_real_ip = self.x_forwarded_for.decode(config.GLOBAL_CHARSET)
+                    break
+                self._client_real_ip = self.client_ip
+                break
+
+        return self._client_real_ip
 
     @property
     def protocol(self) -> str:
