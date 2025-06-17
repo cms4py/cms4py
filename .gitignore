@@ -5,3 +5,5 @@ venv
 node_modules
 data
 .vscode
+out
+__pycache__
