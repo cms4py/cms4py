@@ -1,3 +1,3 @@
-import out.python.Server as Server
+import out.python.server as Server
 
-app = Server.cms4py_AsgiAppFactory.get_newAsgiApp()
+app = Server.top_yunp_cms4py_AsgiAppFactory.createAsgiApp()

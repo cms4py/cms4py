@@ -1,4 +1,4 @@
-package cms4py;
+package top.yunp.cms4py;
 import haxe.PosInfos;
 
 class Logger {

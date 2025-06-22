@@ -1,6 +1,6 @@
 package;
 
-import cms4py.AsgiAppFactory;
+import top.yunp.cms4py.AsgiAppFactory;
 import python.Syntax;
 
 class Boot {

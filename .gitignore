@@ -7,3 +7,4 @@ data
 .vscode
 out
 __pycache__
+.venv
