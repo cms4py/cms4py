@@ -1,14 +1,13 @@
 package top.yunp.cms4py.db;
 
-import python.Syntax;
-import top.yunp.cms4py.web.Server;
-import top.yunp.cms4py.logger.Logger;
-import top.yunp.cms4py.lib.AsyncIO;
-import top.yunp.cms4py.db.aiomysql.Aiomysql;
-import top.yunp.cms4py.db.aiomysql.connection.Connection;
 import haxe.Exception;
-import top.yunp.cms4py.lib.Traceback;
+import python.Syntax;
+import top.yunp.cms4py.db.aiomysql.Aiomysql;
 import top.yunp.cms4py.db.aiomysql.cursors.Cursor;
+import top.yunp.cms4py.db.aiomysql.pool.Pool;
+import top.yunp.cms4py.lib.Traceback;
+import top.yunp.cms4py.logger.Logger;
+import top.yunp.cms4py.web.Server;
 
 @:build(hxasync.AsyncMacro.build())
 class DbConnector {
@@ -22,7 +21,7 @@ class DbConnector {
         return _instance;
     }
 
-    private var _pool:Dynamic = null;
+    private var _pool:Pool = null;
 
     public function new() {
     }
@@ -42,7 +41,7 @@ class DbConnector {
     }
 
     @async public function use(@async handler:(cursor:Cursor) -> Dynamic) {
-        var conn:Connection = @await _pool.acquire();
+        var conn = @await _pool.acquire();
         var cursor = @await conn.cursor();
         try {
             @await handler(cursor);
