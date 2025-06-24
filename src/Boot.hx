@@ -1,14 +1,15 @@
 package;
 
-import top.yunp.cms4py.AsgiAppFactory;
 import python.Syntax;
+import top.yunp.cms4py.ASGI;
+import top.yunp.cms4py.web.Server;
 
 class Boot {
-	static public function main() {
-		Syntax.importModule('uvicorn');
+    static public function main() {
+        Syntax.importModule('uvicorn');
 
-		if (Syntax.code("__name__") == "__main__") {
-			Syntax.callNamedUntyped(Syntax.code('uvicorn').run, {app: AsgiAppFactory.createAsgiApp(), host: "0.0.0.0"});
-		}
-	}
+        if (Syntax.code("__name__") == "__main__") {
+            Syntax.callNamedUntyped(Syntax.code('uvicorn').run, {app: ASGI.app, host: "0.0.0.0", port:Server.web.get("serverPort")});
+        }
+    }
 }
