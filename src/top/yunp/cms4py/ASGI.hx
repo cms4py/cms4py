@@ -5,14 +5,25 @@ import python.Syntax;
 import Routes;
 import top.yunp.cms4py.logger.Logger;
 import top.yunp.cms4py.db.DbConnector;
+import starlette.routing.Route;
+import top.yunp.cms4py.web.Server;
+import starlette.staticfiles.StaticFiles;
+import python.lib.os.Path;
+import starlette.routing.Mount;
+import top.yunp.cms4py.web.routing.CRoute;
 
 @:build(hxasync.AsyncMacro.build())
 class ASGI {
     private static function createStarletteAsgiApp() {
         Syntax.importFromAs("starlette.applications", "Starlette", "Starlette");
 
+        var routes:Array<CRoute> = Routes.configRoutes();
+
+        var r:Array<Dynamic> = routes.map(c -> c.toRoute());
+        r.push(Syntax.callNamedUntyped(Mount, {path:"/static", app:Syntax.callNamedUntyped(StaticFiles, {directory:Path.join(Server.projectRoot, Server.web.get("staticRoot")), html:true})}));
+
         final app = Syntax.callNamedUntyped(Syntax.code("Starlette"), {
-            routes: Routes.createRoutes()
+            routes: r
         });
         return app;
     }

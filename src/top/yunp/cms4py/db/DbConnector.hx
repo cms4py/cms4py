@@ -8,6 +8,7 @@ import top.yunp.cms4py.db.aiomysql.pool.Pool;
 import top.yunp.cms4py.lib.Traceback;
 import top.yunp.cms4py.logger.Logger;
 import top.yunp.cms4py.web.Server;
+import top.yunp.cms4py.db.aiomysql.cursors.DictCursor;
 
 @:build(hxasync.AsyncMacro.build())
 class DbConnector {
@@ -40,16 +41,21 @@ class DbConnector {
         return _pool;
     }
 
-    @async public function use(@async handler:(cursor:Cursor) -> Dynamic) {
+    @async public function use(handler:(cursor:Cursor) -> Dynamic):Dynamic {
         var conn = @await _pool.acquire();
-        var cursor = @await conn.cursor();
+        @await conn.autocommit(false);
+        var cursor = @await conn.cursor(DictCursor);
+        var result:Dynamic = null;
         try {
-            @await handler(cursor);
+            result = @await handler(cursor);
         } catch (e:Exception) {
+            @await conn.rollback();
             Logger.info(e);
             Traceback.print_exc();
         }
+        @await conn.commit();
         @await cursor.close();
         @await _pool.release(conn);
+        return result;
     }
 }

@@ -1,4 +1,4 @@
-package top.yunp.cms4py.templating;
+package top.yunp.cms4py.web.templating;
 import starlette.templating.Jinja2Templates;
 import starlette.responses.HTMLResponse;
 import starlette.requests.Request;

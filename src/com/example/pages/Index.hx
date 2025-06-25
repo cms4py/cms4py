@@ -1,18 +1,20 @@
 package com.example.pages;
 import starlette.requests.Request;
 import starlette.responses.Response;
-import top.yunp.cms4py.db.DbConnector;
 import top.yunp.cms4py.logger.Logger;
-import top.yunp.cms4py.templating.Templates;
+import top.yunp.cms4py.web.routing.Page;
 
 @:build(hxasync.AsyncMacro.build())
-class Index {
-    @async public static function page(request:Request):Response {
-        @await DbConnector.getInstance().use(@async (cursor) -> {
-            var r = @await cursor.execute("select * from users");
-            r = @await cursor.fetchall();
-            Logger.info(r);
+class Index extends Page {
+
+    public function new() {}
+
+    @async override public function execute(request:Request):Response {
+        var r = @await useCursor(@async cursor -> {
+            @await cursor.execute(db(db.users.id > 0).select());
+            return @await cursor.fetchall();
         });
-        return Templates.getInstance().response(request, "index.html", {content:"Hello"});
+        Logger.info(r);
+        return templateResponse(request, "index.html", {content:"Hello"});
     }
 }
