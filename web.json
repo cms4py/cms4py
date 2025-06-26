@@ -2,11 +2,14 @@
   "serverPort": 8000,
   "staticRoot": "static",
   "templateRoot": "template",
+  "db": "mysql",
   "dbHost": "127.0.0.1",
   "dbPort": 3336,
   "dbUser": "root",
   "dbPassword": "example",
   "dbName": "example",
   "dbPoolMinsize": 0,
-  "dbPoolMaxsize": 10
+  "dbPoolMaxsize": 10,
+  "workers": 1,
+  "logLevel": "debug"
 }

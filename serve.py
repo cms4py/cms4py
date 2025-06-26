@@ -16,11 +16,10 @@ def main():
             app="out.python.server:top_yunp_cms4py_ASGI.app",
             host="0.0.0.0",
             port=web["serverPort"],
-            workers=1,
+            workers=web["workers"],
             reload=True
         )
 
 
 if __name__ == "__main__":
     main()
-    

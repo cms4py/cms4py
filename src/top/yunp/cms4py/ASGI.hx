@@ -1,71 +1,72 @@
 package top.yunp.cms4py;
 
-import python.Dict;
-import python.Syntax;
 import Routes;
-import top.yunp.cms4py.logger.Logger;
-import top.yunp.cms4py.db.DbConnector;
-import starlette.routing.Route;
-import top.yunp.cms4py.web.Server;
-import starlette.staticfiles.StaticFiles;
+import python.Syntax;
 import python.lib.os.Path;
+import starlette.applications.Starlette;
 import starlette.routing.Mount;
+import starlette.staticfiles.StaticFiles;
+import top.yunp.cms4py.db.DbConnector;
+import top.yunp.cms4py.lib.FuncTools;
+import top.yunp.cms4py.logger.Logger;
+import top.yunp.cms4py.utils.ObjectUtils;
+import top.yunp.cms4py.web.Server;
 import top.yunp.cms4py.web.routing.CRoute;
 
 @:build(hxasync.AsyncMacro.build())
 class ASGI {
-    private static function createStarletteAsgiApp() {
-        Syntax.importFromAs("starlette.applications", "Starlette", "Starlette");
+	private static function createStarletteAsgiApp() {
+		var routes:Array<CRoute> = Routes.configRoutes();
 
-        var routes:Array<CRoute> = Routes.configRoutes();
+		var r:Array<Dynamic> = routes.map(c -> c.toRoute());
+		r.push(FuncTools.callNamed(Mount, {
+			path: "/static",
+			app: FuncTools.callNamed(StaticFiles, {
+				directory: Path.join(Server.projectRoot, Server.web.get("staticRoot")),
+				html: true
+			})
+		}));
 
-        var r:Array<Dynamic> = routes.map(c -> c.toRoute());
-        r.push(Syntax.callNamedUntyped(Mount, {path:"/static", app:Syntax.callNamedUntyped(StaticFiles, {directory:Path.join(Server.projectRoot, Server.web.get("staticRoot")), html:true})}));
+		final app = FuncTools.callNamed(Starlette, {
+			routes: r
+		});
+		return app;
+	}
 
-        final app = Syntax.callNamedUntyped(Syntax.code("Starlette"), {
-            routes: r
-        });
-        return app;
-    }
+	@async public static function lifespanHandler(scope:Dynamic, receive:Dynamic, send:Dynamic) {
+		while (true) {
+			var message = @await receive();
+			var pool:Dynamic = null;
+			switch (Syntax.arrayAccess(message, "type")) {
+				case "lifespan.startup":
+					pool = @await DbConnector.getInstance().createPool();
+					@await send(ObjectUtils.toDict({type: "lifespan.startup.complete"}));
+					break;
+				case "lifespan.shutdown":
+					if (pool != null) {
+						pool.close();
+						@await pool.wait_closed();
+					}
+					@await send(ObjectUtils.toDict({type: "lifespan.shutdown.complete"}));
+					break;
+				default:
+					Logger.warn('Unsupported message type ${Syntax.arrayAccess(message, "type")}');
+			}
+		}
+	}
 
-    @async public static function lifespanHandler(scope:Dynamic, receive:Dynamic, send:Dynamic) {
-        while (true) {
-            var message = @await receive();
-            var pool:Dynamic = null;
-            switch (Syntax.arrayAccess(message, "type")) {
-                case "lifespan.startup":
-                    pool = @await DbConnector.getInstance().createPool();
-                    var r = new Dict<String, String>();
-                    r.set("type", "lifespan.startup.complete");
-                    @await send(r);
-                    break;
-                case "lifespan.shutdown":
-                    if (pool != null) {
-                        pool.close();
-                        @await pool.wait_closed();
-                    }
-                    var r = new Dict<String, String>();
-                    r.set("type", "lifespan.shutdown.complete");
-                    @await send(r);
-                    break;
-                default :
-                    Logger.warn('Unsupported message type ${Syntax.arrayAccess(message, "type")}');
-            }
-        }
-    }
+	private static var _starletteApp:Dynamic = null;
 
-    private static var _starletteApp:Dynamic = null;
+	@async public static function app(scope:Dynamic, receive:Dynamic, send:Dynamic) {
+		if (_starletteApp == null) {
+			_starletteApp = createStarletteAsgiApp();
+		}
 
-    @async public static function app(scope:Dynamic, receive:Dynamic, send:Dynamic) {
-        if (_starletteApp == null) {
-            _starletteApp = createStarletteAsgiApp();
-        }
+		if (Syntax.arrayAccess(scope, "type") == "lifespan") {
+			return @await lifespanHandler(scope, receive, send);
+			return;
+		}
 
-        if (Syntax.arrayAccess(scope, "type") == "lifespan") {
-            return @await lifespanHandler(scope, receive, send);
-            return;
-        }
-
-        return @await _starletteApp(scope, receive, send);
-    }
+		return @await _starletteApp(scope, receive, send);
+	}
 }

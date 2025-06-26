@@ -1,11 +1,11 @@
 package top.yunp.cms4py.web.routing;
-import starlette.requests.Request;
 import haxe.exceptions.NotImplementedException;
+import starlette.requests.Request;
 import starlette.responses.Response;
-import top.yunp.cms4py.web.templating.Templates;
-import top.yunp.cms4py.db.aiomysql.cursors.Cursor;
 import top.yunp.cms4py.db.DbConnector;
+import top.yunp.cms4py.db.aiomysql.cursors.PCursor;
 import top.yunp.cms4py.db.pydal.PDAL;
+import top.yunp.cms4py.web.templating.Templates;
 
 @:build(hxasync.AsyncMacro.build())
 class Page {
@@ -24,7 +24,7 @@ class Page {
         return Templates.getInstance().response(request, name, context);
     }
 
-    @async public function useCursor(handler:(cursor:Cursor) -> Dynamic):Dynamic {
+    @async public function useCursor(handler:(cursor:PCursor) -> Dynamic):Dynamic {
         return @await DbConnector.getInstance().use(handler);
     }
 
