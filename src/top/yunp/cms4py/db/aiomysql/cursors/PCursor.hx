@@ -49,7 +49,7 @@ class PCursor {
 		return _modified;
 	}
 
-	@async public function insert(table:PTableOp, data:Dynamic):Dynamic {
+	@async public function insert(table:PTable, data:Dynamic):Dynamic {
 		return @await execute(table.insert(data));
 	}
 }

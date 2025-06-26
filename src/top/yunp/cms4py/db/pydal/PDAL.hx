@@ -2,7 +2,7 @@ package top.yunp.cms4py.db.pydal;
 
 import python.Syntax;
 import top.yunp.cms4py.web.Server;
-import top.yunp.cms4py.db.pydal.PTable.PTableOp;
+import top.yunp.cms4py.db.pydal.PTable;
 
 class PDAL {
 	private static var _instance:PDAL = null;
@@ -31,19 +31,19 @@ class PDAL {
 		_pdalOp = new PDALOp(this);
 	}
 
-	private var _tables:Map<String, PTableOp> = new Map();
+	private var _tables:Map<String, PTable> = new Map();
 
-	public function table(name:String):PTableOp {
+	public function table(name:String):PTable {
 		if (_tables.exists(name)) {
 			return _tables.get(name);
 		} else {
-			var t = new PTable(Reflect.field(_dal, name)).op;
+			var t = new PTable(Reflect.field(_dal, name));
 			_tables.set(name, t);
 			return t;
 		}
 	}
 
-	public function t(name:String):PTableOp {
+	public function t(name:String):PTable {
 		return table(name);
 	}
 
@@ -70,7 +70,7 @@ abstract PDALOp(PDAL) {
 
 	@:op([])
 	@:op(a.b)
-	public function table(name:String):PTableOp {
+	public function table(name:String):PTable {
 		return this.table(name);
 	}
 
