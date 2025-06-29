@@ -1,4 +1,5 @@
 package top.yunp.cms4py.framework.web.routing;
+
 import haxe.exceptions.NotImplementedException;
 import starlette.requests.Request;
 import starlette.responses.Response;
@@ -9,27 +10,28 @@ import top.yunp.cms4py.framework.web.templating.Templates;
 
 @:build(hxasync.AsyncMacro.build())
 class Page {
+	public var db(get, null):PDALOp;
 
-    public var db(get, null):PDALOp;
+	private function get_db():PDALOp {
+		return PDAL.getInstance().op;
+	}
 
-    private function get_db():PDALOp {
-        return PDAL.getInstance().op;
-    }
+	@async public function execute(request:Request):Response {
+		throw new NotImplementedException();
+	}
 
-    @async public function execute(request:Request):Response {
-        throw new NotImplementedException();
-    }
+	public function templateResponse(request:Request, name:String, ?context:Dynamic):Response {
+		return Templates.getInstance().response(request, name, context);
+	}
 
-    public function templateResponse(request:Request, name:String, ?context:Dynamic):Response {
-        return Templates.getInstance().response(request, name, context);
-    }
+	@async public function useCursor(handler:(cursor:PCursor) -> Dynamic):Dynamic {
+		return @await DbConnector.getInstance().use(handler);
+	}
 
-    @async public function useCursor(handler:(cursor:PCursor) -> Dynamic):Dynamic {
-        return @await DbConnector.getInstance().use(handler);
-    }
-
-    @:allow(top.yunp.cms4py.framework.web.routing.CRoute)
-    @async function __internal_call__(request:Request):Response {
-        return @await execute(request);
-    }
+	@:allow(top.yunp.cms4py.framework.web.routing.CRoute)
+	@async function __internal_call__(request:Request):Response {
+		var req:Dynamic = request;
+		req.siteName = Server.web.get("siteName");
+		return @await execute(req);
+	}
 }
