@@ -3,9 +3,9 @@ services:
     image: mariadb:11.1.2
     restart: always
     environment:
-      MARIADB_ROOT_PASSWORD: "example"
+      MARIADB_ROOT_PASSWORD: "cms4py"
     volumes:
-      - "./mariadb_data:/var/lib/mysql"
+      - "./data/mariadb_data:/var/lib/mysql"
     ports:
       - "3336:3306"
 

@@ -6,12 +6,12 @@ import python.lib.os.Path;
 import starlette.applications.Starlette;
 import starlette.routing.Mount;
 import starlette.staticfiles.StaticFiles;
-import top.yunp.cms4py.db.DbConnector;
-import top.yunp.cms4py.lib.FuncTools;
-import top.yunp.cms4py.logger.Logger;
-import top.yunp.cms4py.utils.ObjectUtils;
-import top.yunp.cms4py.web.Server;
-import top.yunp.cms4py.web.routing.CRoute;
+import top.yunp.cms4py.framework.db.DbConnector;
+import top.yunp.cms4py.framework.lib.FuncTools;
+import top.yunp.cms4py.framework.logger.Logger;
+import top.yunp.cms4py.framework.utils.ObjectUtils;
+import top.yunp.cms4py.framework.web.Server;
+import top.yunp.cms4py.framework.web.routing.CRoute;
 
 @:build(hxasync.AsyncMacro.build())
 class ASGI {

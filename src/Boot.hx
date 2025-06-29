@@ -2,7 +2,7 @@ package;
 
 import python.Syntax;
 import top.yunp.cms4py.ASGI;
-import top.yunp.cms4py.web.Server;
+import top.yunp.cms4py.framework.web.Server;
 
 class Boot {
     static public function main() {
