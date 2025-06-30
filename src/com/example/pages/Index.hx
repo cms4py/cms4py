@@ -1,7 +1,7 @@
 package com.example.pages;
 
-import starlette.requests.Request;
-import starlette.responses.Response;
+import externals.starlette.requests.Request;
+import externals.starlette.responses.Response;
 import top.yunp.cms4py.framework.logger.Logger;
 import top.yunp.cms4py.framework.web.routing.Page;
 

@@ -1,4 +1,4 @@
-package starlette.routing;
+package externals.starlette.routing;
 
 @:pythonImport("starlette.routing", "BaseRoute")
 extern class BaseRoute {

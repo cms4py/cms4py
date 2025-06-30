@@ -1,4 +1,4 @@
-package starlette.responses;
+package externals.starlette.responses;
 import python.Dict;
 
 @:pythonImport("starlette.responses", "PlainTextResponse")

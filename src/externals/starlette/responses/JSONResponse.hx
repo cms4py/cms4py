@@ -1,4 +1,4 @@
-package starlette.responses;
+package externals.starlette.responses;
 
 @:pythonImport("starlette.responses", "JSONResponse")
 extern class JSONResponse extends Response {

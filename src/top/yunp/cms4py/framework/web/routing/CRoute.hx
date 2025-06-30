@@ -1,5 +1,5 @@
 package top.yunp.cms4py.framework.web.routing;
-import starlette.routing.Route;
+import externals.starlette.routing.Route;
 
 class CRoute {
 

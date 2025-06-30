@@ -20,22 +20,11 @@
  * AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH
  * THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package;
 
-import top.yunp.cms4py.app.pages.apis.actions.user.Profile;
-import top.yunp.cms4py.app.pages.apis.API;
-import com.example.pages.Index;
-import top.yunp.cms4py.framework.web.routing.CRoute;
+package top.yunp.cms4py.app.exceptions;
 
-class Routes {
-    public static function configRoutes():Array<CRoute> {
-
-        var apis = new API();
-        apis.addAction("user.profile.aspx", new Profile());
-
-        return [
-            new CRoute("/", new Index()),
-            new CRoute("/apis/{action}", apis)
-        ];
-    }
+class APIException extends PageException {
+	public function new(?message:String) {
+		super(message);
+	}
 }

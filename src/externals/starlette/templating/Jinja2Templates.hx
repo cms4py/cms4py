@@ -20,22 +20,17 @@
  * AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH
  * THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package;
 
-import top.yunp.cms4py.app.pages.apis.actions.user.Profile;
-import top.yunp.cms4py.app.pages.apis.API;
-import com.example.pages.Index;
-import top.yunp.cms4py.framework.web.routing.CRoute;
+package externals.starlette.templating;
 
-class Routes {
-    public static function configRoutes():Array<CRoute> {
+import externals.starlette.responses.HTMLResponse;
+import python.Dict;
+import externals.starlette.requests.Request;
 
-        var apis = new API();
-        apis.addAction("user.profile.aspx", new Profile());
+@:pythonImport("starlette.templating", "Jinja2Templates")
+extern class Jinja2Templates {
+	public function new(directory:String);
 
-        return [
-            new CRoute("/", new Index()),
-            new CRoute("/apis/{action}", apis)
-        ];
-    }
+	public function TemplateResponse(request:Request, name:String, ?context:Dict<String, Any>, ?status_code:Int, ?headers:Dict<String, String>,
+		?media_type:String):HTMLResponse;
 }

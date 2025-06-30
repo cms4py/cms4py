@@ -3,3 +3,4 @@ uvicorn==0.34.3
 Jinja2==3.1.6
 aiomysql==0.2.0
 pydal==20250622.1
+PyJWT==2.10.1

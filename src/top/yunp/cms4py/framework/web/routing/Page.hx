@@ -1,8 +1,8 @@
 package top.yunp.cms4py.framework.web.routing;
 
 import haxe.exceptions.NotImplementedException;
-import starlette.requests.Request;
-import starlette.responses.Response;
+import externals.starlette.requests.Request;
+import externals.starlette.responses.Response;
 import top.yunp.cms4py.framework.db.DbConnector;
 import top.yunp.cms4py.framework.db.aiomysql.cursors.PCursor;
 import top.yunp.cms4py.framework.db.pydal.PDAL;

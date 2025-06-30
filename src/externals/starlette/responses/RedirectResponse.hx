@@ -1,4 +1,4 @@
-package starlette.responses;
+package externals.starlette.responses;
 
 @:pythonImport("starlette.responses", "RedirectResponse")
 extern class RedirectResponse extends Response {
