@@ -1,5 +1,6 @@
-package top.yunp.cms4py.framework.db.aiomysql.cursors;
+package top.yunp.cms4py.framework.db;
 
+import externals.aiomysql.cursors.Cursor;
 import top.yunp.cms4py.framework.db.pydal.PTable;
 import python.Dict;
 import top.yunp.cms4py.framework.db.pydal.PDAL;

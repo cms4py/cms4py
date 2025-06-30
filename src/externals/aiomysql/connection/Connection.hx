@@ -1,6 +1,6 @@
-package top.yunp.cms4py.framework.db.aiomysql.connection;
+package externals.aiomysql.connection;
 
-import top.yunp.cms4py.framework.db.aiomysql.cursors.Cursor;
+import externals.aiomysql.cursors.Cursor;
 
 @:pythonImport("aiomysql.connection", "Connection")
 extern class Connection {

@@ -1,4 +1,4 @@
-package top.yunp.cms4py.framework.db.aiomysql.cursors;
+package externals.aiomysql.cursors;
 
 @:pythonImport("aiomysql.cursors", "Cursor")
 extern class Cursor {

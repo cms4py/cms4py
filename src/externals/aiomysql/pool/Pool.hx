@@ -1,6 +1,6 @@
-package top.yunp.cms4py.framework.db.aiomysql.pool;
+package externals.aiomysql.pool;
 
-import top.yunp.cms4py.framework.db.aiomysql.connection.Connection;
+import externals.aiomysql.connection.Connection;
 
 @:pythonImport("aiomysql.pool", "Pool")
 extern class Pool {

@@ -2,10 +2,10 @@ package top.yunp.cms4py.framework.db;
 
 import haxe.Exception;
 import python.Syntax;
-import top.yunp.cms4py.framework.db.aiomysql.Aiomysql;
-import top.yunp.cms4py.framework.db.aiomysql.cursors.DictCursor;
-import top.yunp.cms4py.framework.db.aiomysql.cursors.PCursor;
-import top.yunp.cms4py.framework.db.aiomysql.pool.Pool;
+import top.yunp.cms4py.framework.db.Aiomysql;
+import externals.aiomysql.cursors.DictCursor;
+import top.yunp.cms4py.framework.db.PCursor;
+import externals.aiomysql.pool.Pool;
 import top.yunp.cms4py.framework.lib.Traceback;
 import top.yunp.cms4py.framework.logger.Logger;
 import top.yunp.cms4py.framework.web.Server;
