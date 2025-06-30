@@ -5,7 +5,7 @@ import externals.starlette.requests.Request;
 import externals.starlette.responses.Response;
 import top.yunp.cms4py.framework.db.DbConnector;
 import top.yunp.cms4py.framework.db.PCursor;
-import top.yunp.cms4py.framework.db.pydal.PDAL;
+import top.yunp.cms4py.framework.db.PDAL;
 import top.yunp.cms4py.framework.web.templating.Templates;
 
 @:build(hxasync.AsyncMacro.build())

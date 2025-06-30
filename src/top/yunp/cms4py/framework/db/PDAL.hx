@@ -1,9 +1,10 @@
-package top.yunp.cms4py.framework.db.pydal;
+package top.yunp.cms4py.framework.db;
 
+import externals.pydal.DAL;
 import haxe.Exception;
 import python.Syntax;
 import top.yunp.cms4py.framework.web.Server;
-import top.yunp.cms4py.framework.db.pydal.PTable;
+import top.yunp.cms4py.framework.db.PTable;
 
 class PDAL {
 	private static var _instance:PDAL = null;

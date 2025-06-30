@@ -1,7 +1,8 @@
 package;
 
-import top.yunp.cms4py.framework.db.pydal.DAL;
-import top.yunp.cms4py.framework.db.pydal.Field;
+import externals.pydal.Field;
+import externals.pydal.DAL;
+
 
 class Tables {
 	public static function defineTables(db:DAL) {

@@ -1,4 +1,4 @@
-package top.yunp.cms4py.framework.db.pydal;
+package externals.pydal;
 
 @:pythonImport("pydal", "Field")
 extern class Field {

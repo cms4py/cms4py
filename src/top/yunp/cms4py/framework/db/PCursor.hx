@@ -1,9 +1,9 @@
 package top.yunp.cms4py.framework.db;
 
 import externals.aiomysql.cursors.Cursor;
-import top.yunp.cms4py.framework.db.pydal.PTable;
+import top.yunp.cms4py.framework.db.PTable;
 import python.Dict;
-import top.yunp.cms4py.framework.db.pydal.PDAL;
+import top.yunp.cms4py.framework.db.PDAL;
 
 @:build(hxasync.AsyncMacro.build())
 class PCursor {

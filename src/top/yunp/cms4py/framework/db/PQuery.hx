@@ -1,4 +1,4 @@
-package top.yunp.cms4py.framework.db.pydal;
+package top.yunp.cms4py.framework.db;
 
 import top.yunp.cms4py.framework.logger.Logger;
 import top.yunp.cms4py.framework.lib.FuncTools;
