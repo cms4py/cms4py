@@ -7,7 +7,7 @@ import subprocess
 def main():
     if 'compile' in sys.argv:
         print("Compiling haxe project...")
-        if subprocess.run(["haxe", "build.hxml"]).returncode > 0:
+        if subprocess.run(["haxe", "build.hxml", "--debug"]).returncode > 0:
             print("Failed to compile project")
             return
     with open("web.json") as f:
