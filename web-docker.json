@@ -12,5 +12,7 @@
   "dbPoolMaxsize": 10,
   "workers": 1,
   "logLevel": "debug",
-  "siteName": "cms4py"
+  "siteName": "cms4py",
+  "sessionJwtName": "cms4py_jwt",
+  "sessionJwtSecret": "Id9B03N5l"
 }

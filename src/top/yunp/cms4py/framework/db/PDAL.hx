@@ -21,7 +21,7 @@ class PDAL {
 
 	public function new() {
 		var web = Server.web;
-		var uri = '${web.get("db")}://${web.get("dbUser")}:${web.get("dbPassword")}@${web.get("dbHost")}:${web.get("dbPort")}/${web.get("dbName")}';
+		var uri = '${web.db}://${web.dbUser}:${web.dbPassword}@${web.dbHost}:${web.dbPort}/${web.dbName}';
 		_dal = Syntax.callNamedUntyped(DAL, {
 			uri: uri,
 			migrate: false,

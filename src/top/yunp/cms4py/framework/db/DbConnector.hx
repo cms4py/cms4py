@@ -28,13 +28,13 @@ class DbConnector {
 	@:allow(top.yunp.cms4py.ASGI)
 	@async private function createPool() {
 		_pool = @await Syntax.callNamedUntyped(Aiomysql.create_pool, {
-			host: Server.web.get("dbHost"),
-			port: Server.web.get("dbPort"),
-			user: Server.web.get("dbUser"),
-			password: Server.web.get("dbPassword"),
-			db: Server.web.get("dbName"),
-			minsize: Server.web.get("dbPoolMinsize"),
-			maxsize: Server.web.get("dbPoolMaxsize"),
+			host: Server.web.dbHost,
+			port: Server.web.dbPort,
+			user: Server.web.dbUser,
+			password: Server.web.dbPassword,
+			db: Server.web.dbName,
+			minsize: Server.web.dbPoolMinsize,
+			maxsize: Server.web.dbPoolMaxsize,
 		});
 		return _pool;
 	}

@@ -20,32 +20,25 @@
  * AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH
  * THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package top.yunp.cms4py.framework.web.routing;
 
-import externals.pyjwt.JWT;
-import externals.starlette.requests.Request;
-import externals.starlette.responses.Response;
-import haxe.exceptions.NotImplementedException;
-import python.Lib;
-import top.yunp.cms4py.framework.web.http.Context;
+package top.yunp.cms4py.framework.web;
 
-@:build(hxasync.AsyncMacro.build())
-class Page {
-
-	@async public function execute(context:Context):Response {
-		throw new NotImplementedException();
-	}
-
-	@:allow(top.yunp.cms4py.framework.web.routing.CRoute)
-	@async function __internal_call__(request:Request):Response {
-		var config = Server.web;
-		var context = new Context(request);
-		context.siteName = config.siteName;
-		var jwt = request.cookies.get(config.sessionJwtName);
-		var jwtChanged = false;
-		if (jwt == null) {
-			jwt = JWT.encode(Lib.anonAsDict({}), config.sessionJwtSecret, "HS256");
-		}
-		return @await execute(context);
-	}
+class WebConfig {
+	public var serverPort:Int;
+	public var staticRoot:String;
+	public var templateRoot:String;
+	public var db:String;
+	public var dbHost:String;
+	public var dbPort:Int;
+	public var dbUser:String;
+	public var dbPassword:String;
+	public var dbName:String;
+	public var dbPoolMinsize:Int;
+	public var dbPoolMaxsize:Int;
+	public var workers:Int;
+	public var logLevel:String;
+	public var logLevelIndex:Int;
+	public var siteName:String;
+	public var sessionJwtName:String;
+	public var sessionJwtSecret:String;
 }

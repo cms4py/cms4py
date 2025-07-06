@@ -20,10 +20,11 @@
  * AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH
  * THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+
 package top.yunp.cms4py.app.pages.apis.actions.user;
 
 import python.Dict;
-import externals.starlette.requests.Request;
+import top.yunp.cms4py.framework.web.http.Context;
 
 @:build(hxasync.AsyncMacro.build())
 class Profile extends Action {
@@ -31,7 +32,7 @@ class Profile extends Action {
 		super();
 	}
 
-	@async override function doAction(request:Request):Dict<String, Dynamic> {
+	@async override function doAction(request:Context):Dict<String, Dynamic> {
 		return Actions.createOkResult();
 	}
 }

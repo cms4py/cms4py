@@ -25,7 +25,7 @@ class Templates extends Jinja2Templates {
 
     public static function getInstance():Templates {
         if (_instance == null) {
-            _instance = new Templates(Path.join(Server.projectRoot, Server.web.get("templateRoot")));
+            _instance = new Templates(Path.join(Server.projectRoot, Server.web.templateRoot));
         }
         return _instance;
     }

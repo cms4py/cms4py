@@ -20,17 +20,18 @@
  * AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH
  * THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+
 package top.yunp.cms4py.app.pages.apis.actions;
 
-import python.Exceptions.NotImplementedError;
 import python.Dict;
-import externals.starlette.requests.Request;
+import python.Exceptions.NotImplementedError;
+import top.yunp.cms4py.framework.web.http.Context;
 
 @:build(hxasync.AsyncMacro.build())
 class Action {
 	public function new() {}
 
-	@async public function doAction(request:Request):Dict<String, Dynamic> {
+	@async public function doAction(request:Context):Dynamic {
 		throw new NotImplementedError();
 	}
 }

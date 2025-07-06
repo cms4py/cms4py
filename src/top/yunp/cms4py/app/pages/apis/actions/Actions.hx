@@ -20,6 +20,7 @@
  * AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH
  * THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+
 package top.yunp.cms4py.app.pages.apis.actions;
 
 import python.Dict;
@@ -32,12 +33,10 @@ class Actions {
 		return createResult(CODE_OK, "OK", result);
 	}
 
-	public static function createResult(code:Int, message:String, ?result:Dynamic):Dict<String, Dynamic> {
-		var d = new Dict<String, Dynamic>();
-		d.set("code", code);
-		d.set("message", message);
+	public static function createResult(code:Int, message:String, ?result:Dynamic):Dynamic {
+		var d:Dynamic = {code: code, message: message};
 		if (result != null) {
-			d.set("result", result);
+			d.result = result;
 		}
 		return d;
 	}

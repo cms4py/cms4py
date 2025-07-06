@@ -20,8 +20,10 @@
  * AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH
  * THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+
 package top.yunp.cms4py.app.pages.apis;
 
+import top.yunp.cms4py.framework.web.http.Context;
 import python.Dict;
 import python.lib.Json;
 import externals.starlette.requests.Request;
@@ -47,14 +49,14 @@ class API extends Page {
 		return _actions;
 	}
 
-	@async override function execute(request:Request):Response {
-		var actionName = request.path_params.get("action");
-		var result:Dict<String, Dynamic> = null;
+	@async override function execute(context:Context):Response {
+		var actionName = context.path_params.get("action");
+		var result:Dynamic = null;
 		if (actions.exists(actionName)) {
-			result = @await actions.get(actionName).doAction(request);
+			result = @await actions.get(actionName).doAction(context);
 		} else {
 			result = Actions.createResult(Actions.CODE_ACTION_NOT_FOUND, "Action not found");
 		}
-		return new JSONResponse(Json.dumps(result));
+		return context.json(result);
 	}
 }

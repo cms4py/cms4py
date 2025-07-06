@@ -25,6 +25,7 @@ package top.yunp.cms4py;
 
 import Routes;
 import python.Syntax;
+import python.Lib;
 import python.lib.os.Path;
 import externals.starlette.applications.Starlette;
 import externals.starlette.routing.Mount;
@@ -32,7 +33,6 @@ import externals.starlette.staticfiles.StaticFiles;
 import top.yunp.cms4py.framework.db.DbConnector;
 import top.yunp.cms4py.framework.lib.FuncTools;
 import top.yunp.cms4py.framework.logger.Logger;
-import top.yunp.cms4py.framework.utils.ObjectUtils;
 import top.yunp.cms4py.framework.web.Server;
 import top.yunp.cms4py.framework.web.routing.CRoute;
 
@@ -45,7 +45,7 @@ class ASGI {
 		r.push(FuncTools.callNamed(Mount, {
 			path: "/static",
 			app: FuncTools.callNamed(StaticFiles, {
-				directory: Path.join(Server.projectRoot, Server.web.get("staticRoot")),
+				directory: Path.join(Server.projectRoot, Server.web.staticRoot),
 				html: true
 			})
 		}));
@@ -63,14 +63,14 @@ class ASGI {
 			switch (Syntax.arrayAccess(message, "type")) {
 				case "lifespan.startup":
 					pool = @await DbConnector.getInstance().createPool();
-					@await send(ObjectUtils.toDict({type: "lifespan.startup.complete"}));
+					@await send(Lib.anonAsDict({type: "lifespan.startup.complete"}));
 					break;
 				case "lifespan.shutdown":
 					if (pool != null) {
 						pool.close();
 						@await pool.wait_closed();
 					}
-					@await send(ObjectUtils.toDict({type: "lifespan.shutdown.complete"}));
+					@await send(Lib.anonAsDict({type: "lifespan.shutdown.complete"}));
 					break;
 				default:
 					Logger.warn('Unsupported message type ${Syntax.arrayAccess(message, "type")}');
