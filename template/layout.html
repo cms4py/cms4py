@@ -108,6 +108,8 @@
                         <li class="nav-item"><a class="nav-link" href="#">{{request.siteName}}</a></li>
                         <li class="nav-item"><a class="nav-link" href="#">Articles</a></li>
                         <li class="nav-item"><a class="nav-link" href="#">About</a></li>
+                        <li v-if="userProfile.userid" class="nav-item"><a class="nav-link" href="#">User</a></li>
+                        <li v-else class="nav-item"><a class="nav-link" href="#">登录/注册</a></li>
                     </ul>
                 </div>
             </div>

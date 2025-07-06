@@ -23,6 +23,7 @@
 
 package top.yunp.cms4py.framework.web.http;
 
+import externals.starlette.responses.PlainTextResponse;
 import haxe.Json;
 import externals.starlette.responses.JSONResponse;
 import python.Dict;
@@ -68,7 +69,7 @@ class Context {
 	}
 
 	public function json(data:Dynamic):Response {
-		return new JSONResponse(Json.stringify(data));
+		return new PlainTextResponse(Json.stringify(data));
 	}
 
 	public var db(get, null):PDALOp;

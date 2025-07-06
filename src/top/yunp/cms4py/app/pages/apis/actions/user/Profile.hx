@@ -33,6 +33,6 @@ class Profile extends Action {
 	}
 
 	@async override function doAction(request:Context):Dict<String, Dynamic> {
-		return Actions.createOkResult();
+		return Actions.createOkResult({});
 	}
 }
