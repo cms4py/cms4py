@@ -23,7 +23,7 @@
 
 package top.yunp.cms4py.framework.web;
 
-class WebConfig {
+interface IWebConfig {
 	public var serverPort:Int;
 	public var staticRoot:String;
 	public var templateRoot:String;

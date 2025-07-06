@@ -23,9 +23,8 @@
 
 package top.yunp.cms4py.framework.web;
 
-import haxe.Json;
 import externals.py.lang.PyWith;
-import python.Dict;
+import haxe.Json;
 import python.Syntax;
 import python.lib.Io;
 import python.lib.os.Path;
@@ -45,11 +44,11 @@ class Server {
 		return _projectRoot;
 	}
 
-	private static var _web:WebConfig = null;
+	private static var _web:IWebConfig = null;
 
-	public static var web(get, null):WebConfig;
+	public static var web(get, null):IWebConfig;
 
-	public static function get_web():WebConfig {
+	private static function get_web():IWebConfig {
 		if (_web == null) {
 			var content = PyWith.sync_with(Io.open(Path.join(projectRoot, "web.json"), "r"), it -> {
 				return it.read();

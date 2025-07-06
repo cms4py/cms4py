@@ -63,7 +63,7 @@ class Context {
 		return value;
 	}
 
-	public function templateResponse(name:String, ?context:Dynamic):Response {
+	public function render(name:String, ?context:Dynamic):Response {
 		return Templates.getInstance().response(request, name, context);
 	}
 
@@ -121,5 +121,16 @@ class Context {
 
 	private function get_cookies() {
 		return request.cookies;
+	}
+
+	public var session(get, null):JWTSession;
+
+	private var _session:JWTSession = null;
+
+	private function get_session() {
+		if (_session == null) {
+			_session = new JWTSession(this);
+		}
+		return _session;
 	}
 }
