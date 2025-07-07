@@ -20,22 +20,28 @@
  * AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH
  * THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+
 package;
 
+import com.example.pages.Sign;
+import com.example.pages.Articles;
+import com.example.pages.About;
 import top.yunp.cms4py.app.pages.apis.actions.user.Profile;
 import top.yunp.cms4py.app.pages.apis.API;
 import com.example.pages.Index;
 import top.yunp.cms4py.framework.web.routing.CRoute;
 
 class Routes {
-    public static function configRoutes():Array<CRoute> {
+	public static function configRoutes():Array<CRoute> {
+		var apis = new API();
+		apis.addAction("user.profile.aspx", new Profile());
 
-        var apis = new API();
-        apis.addAction("user.profile.aspx", new Profile());
-
-        return [
-            new CRoute("/", new Index()),
-            new CRoute("/apis/{action}", apis)
-        ];
-    }
+		return [
+			new CRoute("/", new Index()),
+			new CRoute("/about", new About()),
+			new CRoute("/articles", new Articles()),
+			new CRoute("/sign", new Sign()),
+			new CRoute("/apis/{action}", apis)
+		];
+	}
 }

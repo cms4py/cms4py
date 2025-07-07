@@ -23,6 +23,6 @@ class Index extends Page {
 		// 	return @await cursor.select(db.user.login_name > 0, null, {limitby: [1, 2]});
 		// });
 		// Logger.info(r);
-		return context.render("index.html", {title: "Home"});
+		return context.render("index.html", {title: "主页"});
 	}
 }
