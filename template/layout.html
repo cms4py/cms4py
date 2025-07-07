@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="/static/styles/layout.css">
 </head>
 
-<body>
+<body class="bg-body-tertiary">
     <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
         <symbol id="check2" viewBox="0 0 16 16">
             <path
@@ -115,7 +115,33 @@
             </div>
         </div>
     </nav>
-    <script src="/static/js/navbar.app.js"></script>
+    <script>
+        (function () {
+            Vue.createApp({
+                setup() {
+                    let userProfile = Vue.ref({});
+
+                    async function loadUserProfile() {
+                        let resp = await fetch("/apis/user.profile.aspx");
+                        let data = await resp.json();
+                        if (data.code) {
+                            console.error("Failed to load user profile", data);
+                            return;
+                        }
+
+                        console.log(data);
+                        Object.assign(userProfile.value, data.result);
+                        console.log(userProfile.value.userid, data.result);
+                    }
+
+                    Vue.onMounted(async () => {
+                        await loadUserProfile();
+                    });
+                    return { userProfile };
+                }
+            }).mount("#navbar");
+        })();
+    </script>
     <main>
         {% block content %}
         {% endblock %}

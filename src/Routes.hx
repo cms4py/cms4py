@@ -23,6 +23,7 @@
 
 package;
 
+import com.example.pages.ResetPassword;
 import com.example.pages.Sign;
 import com.example.pages.Articles;
 import com.example.pages.About;
@@ -41,6 +42,7 @@ class Routes {
 			new CRoute("/about", new About()),
 			new CRoute("/articles", new Articles()),
 			new CRoute("/sign", new Sign()),
+			new CRoute("/reset-password", new ResetPassword()),
 			new CRoute("/apis/{action}", apis)
 		];
 	}
