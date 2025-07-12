@@ -21,18 +21,20 @@
  * THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package top.yunp.cms4py.app.pages.apis.actions.user;
+package com.example.myapp.apis.user;
 
+import top.yunp.cms4py.app.pages.apis.actions.Action;
 import python.Dict;
 import top.yunp.cms4py.framework.web.http.Context;
 
 @:build(hxasync.AsyncMacro.build())
-class Profile extends Action {
+class SignUp extends Action {
 	public function new() {
 		super();
 	}
 
-	@async override function doAction(request:Context):Dict<String, Dynamic> {
-		return Actions.createOkResult({});
+	@async override function doAction(context:Context):Dict<String, Dynamic> {
+		
+		return Action.createOkResult({});
 	}
 }

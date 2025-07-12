@@ -21,23 +21,19 @@
  * THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package top.yunp.cms4py.app.pages.apis.actions;
+package com.example.myapp.apis.user;
 
+import top.yunp.cms4py.app.pages.apis.actions.Action;
 import python.Dict;
+import top.yunp.cms4py.framework.web.http.Context;
 
-class Actions {
-	public static final CODE_OK = 0;
-	public static final CODE_ACTION_NOT_FOUND = 8001;
-
-	public static function createOkResult(?result:Dynamic) {
-		return createResult(CODE_OK, "OK", result);
+@:build(hxasync.AsyncMacro.build())
+class Profile extends Action {
+	public function new() {
+		super();
 	}
 
-	public static function createResult(code:Int, message:String, ?result:Dynamic):Dynamic {
-		var d:Dynamic = {code: code, message: message};
-		if (result != null) {
-			d.result = result;
-		}
-		return d;
+	@async override function doAction(context:Context):Dict<String, Dynamic> {
+		return Action.createOkResult({});
 	}
 }
