@@ -21,10 +21,20 @@
  * THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package top.yunp.cms4py.app.exceptions;
+package top.yunp.cms4py.framework.web.exceptions;
 
 class APIException extends PageException {
-	public function new(?message:String) {
-		super(message);
-	}
+    public function new(result:Dynamic, ?message:String) {
+        super(null, message);
+
+        _result = result;
+    }
+
+    private var _result:Dynamic = null;
+
+    public var result(get, null):Dynamic;
+
+    private function get_result():Dynamic {
+        return _result;
+    }
 }

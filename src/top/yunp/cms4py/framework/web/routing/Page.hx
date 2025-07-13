@@ -29,26 +29,39 @@ import externals.starlette.responses.Response;
 import haxe.exceptions.NotImplementedException;
 import python.Lib;
 import top.yunp.cms4py.framework.web.http.Context;
+import top.yunp.cms4py.framework.web.exceptions.PageException;
+import externals.starlette.responses.PlainTextResponse;
+import top.yunp.cms4py.framework.logger.Logger;
 
 @:build(hxasync.AsyncMacro.build())
 class Page {
-	@async public function execute(context:Context):Response {
-		throw new NotImplementedException();
-	}
+    @async public function execute(context:Context):Response {
+        throw new NotImplementedException();
+    }
 
-	@:allow(top.yunp.cms4py.framework.web.routing.CRoute)
-	@async function __internal_call__(request:Request):Response {
-		var config = Server.web;
-		var context = new Context(request);
-		context.siteName = config.siteName;
-		var jwt = request.cookies.get(config.sessionJwtName);
-		if (jwt == null) {
-			jwt = JWT.encode(Lib.anonAsDict({}), config.sessionJwtSecret, "HS256");
-		}
-		var resp = @await execute(context);
-		if (context.session.needUpdateJwt) {
-			resp.set_cookie(config.sessionJwtName, context.session.jwt);
-		}
-		return resp;
-	}
+    @:allow(top.yunp.cms4py.framework.web.routing.CRoute)
+    @async function __internal_call__(request:Request):Response {
+        var resp:Response = null;
+        try {
+            var config = Server.web;
+            var context = new Context(request);
+            context.siteName = config.siteName;
+            var jwt = request.cookies.get(config.sessionJwtName);
+            if (jwt == null) {
+                jwt = JWT.encode(Lib.anonAsDict({}), config.sessionJwtSecret, "HS256");
+            }
+            resp = @await execute(context);
+            if (context.session.needUpdateJwt) {
+                resp.set_cookie(config.sessionJwtName, context.session.jwt);
+            }
+        } catch (e:PageException) {
+            if (e.response != null) {
+                resp = e.response;
+            } else {
+                resp = new PlainTextResponse("Server internal error", 500);
+                Logger.warn(e);
+            }
+        }
+        return resp;
+    }
 }

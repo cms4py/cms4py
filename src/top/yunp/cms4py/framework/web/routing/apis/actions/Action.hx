@@ -21,37 +21,36 @@
  * THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.example.myapp.apis.user;
+package top.yunp.cms4py.framework.web.routing.apis.actions;
 
-import top.yunp.cms4py.framework.web.routing.apis.actions.Action;
-import python.Dict;
+import python.Exceptions.NotImplementedError;
 import top.yunp.cms4py.framework.web.http.Context;
-import top.yunp.cms4py.framework.logger.Logger;
-import python.internal.AnonObject;
 
 @:build(hxasync.AsyncMacro.build())
-class Profile extends Action {
-    public function new() {
-        super();
+class Action {
+    public function new() {}
+
+    @async public function doAction(context:Context):Dynamic {
+        throw new NotImplementedError();
     }
 
-    @async override function doAction(context:Context):Dict<String, Dynamic> {
+    public static final CODE_OK = 0;
+    public static final CODE_ERROR = 1;
+    public static final CODE_ACTION_NOT_FOUND = 8001;
 
-        var result:Dynamic = null;
+    public static function createOkResult(?result:Dynamic) {
+        return createResult(CODE_OK, "OK", result);
+    }
 
-        if (context.session.userid != null) {
-            var user:Dict<String, Dynamic> = @await context.useCursor(@async c -> {
-                return @await c.selectOne(context.db.user.id == context.session.userid);
-            });
+    public static function createErrorResult(?result:Dynamic) {
+        return createResult(CODE_ERROR, "Error", result);
+    }
 
-            if (user != null) {
-                user.remove("password");
-                result = Action.createOkResult(new AnonObject(user));
-            }
+    public static function createResult(code:Int, message:String, ?result:Dynamic):Dynamic {
+        var d:Dynamic = {code: code, message: message};
+        if (result != null) {
+            d.result = result;
         }
-        if (result == null) {
-            result = Action.createOkResult();
-        }
-        return result;
+        return d;
     }
 }

@@ -21,37 +21,42 @@
  * THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package top.yunp.cms4py.app.pages.apis;
+package top.yunp.cms4py.framework.web.routing.apis;
 
 import externals.starlette.responses.Response;
-import top.yunp.cms4py.app.pages.apis.actions.Action;
+import top.yunp.cms4py.framework.web.routing.apis.actions.Action;
 import top.yunp.cms4py.framework.web.http.Context;
 import top.yunp.cms4py.framework.web.routing.Page;
+import top.yunp.cms4py.framework.web.exceptions.APIException;
 
 @:build(hxasync.AsyncMacro.build())
 class API extends Page {
-	public function new() {}
+    public function new() {}
 
-	private var _actions = new Map<String, Action>();
+    private var _actions = new Map<String, Action>();
 
-	public function addAction(name:String, action:Action) {
-		_actions.set(name, action);
-	}
+    public function addAction(name:String, action:Action) {
+        _actions.set(name, action);
+    }
 
-	public var actions(get, never):Map<String, Action>;
+    public var actions(get, never):Map<String, Action>;
 
-	private function get_actions():Map<String, Action> {
-		return _actions;
-	}
+    private function get_actions():Map<String, Action> {
+        return _actions;
+    }
 
-	@async override function execute(context:Context):Response {
-		var actionName = context.path_params.get("action");
-		var result:Dynamic = null;
-		if (actions.exists(actionName)) {
-			result = @await actions.get(actionName).doAction(context);
-		} else {
-			result = Action.createResult(Action.CODE_ACTION_NOT_FOUND, "Action not found");
-		}
-		return context.json(result);
-	}
+    @async override function execute(context:Context):Response {
+        var actionName = context.path_params.get("action");
+        var result:Dynamic = null;
+        if (actions.exists(actionName)) {
+            try {
+                result = @await actions.get(actionName).doAction(context);
+            } catch (e:APIException) {
+                result = e.result;
+            }
+        } else {
+            result = Action.createResult(Action.CODE_ACTION_NOT_FOUND, "Action not found");
+        }
+        return context.json(result);
+    }
 }

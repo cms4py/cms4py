@@ -21,12 +21,24 @@
  * THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package top.yunp.cms4py.app.exceptions;
+package top.yunp.cms4py.framework.web.exceptions;
 
 import top.yunp.cms4py.framework.exceptions.CMS4PyException;
+import externals.starlette.responses.Response;
 
 class PageException extends CMS4PyException {
-	public function new(?message:String) {
-		super(message);
-	}
+    public function new(?response:Response, ?message:String) {
+        super(message);
+        _response = response;
+    }
+
+    private var _response:Response = null;
+
+    public var response(get, null):Response;
+
+    function get_response():Response {
+        return _response;
+    }
+
+
 }

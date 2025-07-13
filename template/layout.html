@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{title}} - {{request.siteName}}</title>
 
+    <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
     <script src="/static/js/color-modes.js"></script>
     <link rel="stylesheet" href="/static/lib/bootstrap-5.3.7-dist/css/bootstrap.min.css">
     <script src="/static/lib/bootstrap-5.3.7-dist/js/bootstrap.bundle.min.js"></script>
@@ -126,8 +127,16 @@
                     <li class="nav-item"><a class="nav-link" href="/">{{request.siteName}}</a></li>
                     <li class="nav-item"><a class="nav-link" href="/articles">内容</a></li>
                     <li class="nav-item"><a class="nav-link" href="/about">关于</a></li>
-                    <li v-if="userProfile.id" class="nav-item">
-                        <a class="nav-link" href="#" v-text="userProfile.nicename||userProfile.login_name"></a>
+                    <li v-if="userProfile.id" class="nav-item dropdown">
+                        <button class="nav-link dropdown-toggle" id="dropdown_user_profile" role="button"
+                                data-bs-toggle="dropdown" aria-expanded="false"
+                                v-text="userProfile.nicename||userProfile.login_name">
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdown_user_profile">
+                            <li>
+                                <button class="dropdown-item" @click="logout">退出</button>
+                            </li>
+                        </ul>
                     </li>
                     <li v-else class="nav-item"><a class="nav-link" href="/sign">登录/注册</a></li>
                 </ul>
@@ -149,13 +158,18 @@
                         return;
                     }
                     Object.assign(userProfile.value, data.result || {});
-                    console.log(userProfile);
                 }
 
                 Vue.onMounted(async () => {
                     await loadUserProfile();
                 });
-                return {userProfile};
+
+                async function logout() {
+                    await fetch("/apis/user.logout.aspx");
+                    location.href = "/";
+                }
+
+                return {userProfile, logout};
             }
         }).mount("#navbar");
     })();

@@ -19,7 +19,7 @@
                 <input class="form-check-input" type="checkbox" value="remember-me" id="checkDefault"
                        v-model="rememberMe" name="remember_me">
                 <label class="form-check-label" for="checkDefault">
-                    30天内免登录
+                    {{web.sessionAge}} 天内免登录
                 </label>
             </div>
             <button class="btn btn-primary w-100 py-2" type="submit" :disabled="performing">登录</button>

@@ -24,21 +24,26 @@
 package top.yunp.cms4py.framework.web;
 
 interface IWebConfig {
-	public var serverPort:Int;
-	public var staticRoot:String;
-	public var templateRoot:String;
-	public var db:String;
-	public var dbHost:String;
-	public var dbPort:Int;
-	public var dbUser:String;
-	public var dbPassword:String;
-	public var dbName:String;
-	public var dbPoolMinsize:Int;
-	public var dbPoolMaxsize:Int;
-	public var workers:Int;
-	public var logLevel:String;
-	public var logLevelIndex:Int;
-	public var siteName:String;
-	public var sessionJwtName:String;
-	public var sessionJwtSecret:String;
+    public var serverPort:Int;
+    public var staticRoot:String;
+    public var templateRoot:String;
+    public var db:String;
+    public var dbHost:String;
+    public var dbPort:Int;
+    public var dbUser:String;
+    public var dbPassword:String;
+    public var dbName:String;
+    public var dbPoolMinsize:Int;
+    public var dbPoolMaxsize:Int;
+    public var workers:Int;
+    public var logLevel:String;
+    public var logLevelIndex:Int;
+    public var siteName:String;
+    public var sessionJwtName:String;
+    public var sessionJwtSecret:String;
+
+    /**
+    Session age, in days
+    **/
+    public var sessionAge:Int;
 }
