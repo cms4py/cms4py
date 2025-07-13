@@ -33,6 +33,7 @@ import top.yunp.cms4py.framework.web.routing.apis.API;
 import com.example.myapp.pages.Index;
 import top.yunp.cms4py.framework.web.routing.CRoute;
 import com.example.myapp.apis.user.Logout;
+import com.example.myapp.apis.user.SignIn;
 
 class Routes {
     public static function configRoutes():Array<CRoute> {
@@ -40,6 +41,7 @@ class Routes {
         apis.addAction("user.profile.aspx", new Profile());
         apis.addAction("user.logout.aspx", new Logout());
         apis.addAction("user.signup.aspx", new SignUp());
+        apis.addAction("user.signin.aspx", new SignIn());
 
         return [
             new CRoute("/", new Index()),

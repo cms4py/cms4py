@@ -80,7 +80,7 @@
                     let result = await resp.json();
                     if (result) {
                         if (result.code) {
-                            if (result.code == 1062) {
+                            if (result.code === 1062) {
                                 registerUsernameAlert.value = "用户名已被占用";
                                 console.log(registerUsernameAlert);
                             } else {
@@ -94,10 +94,27 @@
                     }
                 }
 
-                function formSubmitHandler(form) {
+                async function performLogin(form) {
+                    let resp = await fetch("/apis/user.signin.aspx", {method: "post", body: new FormData(form)});
+                    let result = await resp.json();
+                    console.log(result);
+                    if (result) {
+                        if (result.code) {
+                            console.warn(result);
+                        } else {
+                            location.href = "/profile"
+                        }
+                    } else {
+                        console.log(result);
+                    }
+                }
+
+                async function formSubmitHandler(form) {
                     performing.value = true;
                     if (mode.value == "register") {
-                        performRegister(form);
+                        await performRegister(form);
+                    } else if (mode.value == "login") {
+                        await performLogin(form);
                     }
                     performing.value = false;
                 }

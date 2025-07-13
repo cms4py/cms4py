@@ -25,6 +25,13 @@ package com.example.myapp.apis.user;
 
 import top.yunp.cms4py.framework.web.routing.apis.actions.Action;
 import top.yunp.cms4py.framework.web.http.Context;
+import externals.pydal.validators.CRYPT;
+import python.Tuple.Tuple1;
+import python.Tuple.Tuple2;
+import top.yunp.cms4py.framework.logger.Logger;
+import com.example.myapp.apis.exceptions.ParametersError;
+import python.Dict;
+import com.example.myapp.apis.exceptions.InvalidLogin;
 
 @:build(hxasync.AsyncMacro.build())
 class SignIn extends Action {
@@ -33,7 +40,31 @@ class SignIn extends Action {
     }
 
     @async override public function doAction(context:Context):Dynamic {
+        var form = @await context.request.form();
+        var username = form.get("username");
+        var password = form.get("password");
 
-        return Action.createOkResult();
+        if (username == null || password == null) {
+            throw new ParametersError();
+        }
+
+        var crypt:Dynamic = new CRYPT();
+        var pt:Tuple1<Dynamic> = crypt(password);
+        var p = pt._1;
+        var user:Dict<String, Dynamic> = @await context.useCursor(@async c -> {
+            var u = @await c.selectOne(context.db.user.login_name == username);
+            if (u != null && p == u.get("password")) {
+                return u;
+            }
+            return null;
+        });
+
+        if (user == null) {
+            throw new InvalidLogin();
+        }
+
+        var userid = user.get("id");
+        context.session.userid = userid;
+        return Action.createOkResult({id:userid});
     }
 }
