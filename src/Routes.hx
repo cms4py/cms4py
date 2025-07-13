@@ -34,18 +34,19 @@ import com.example.myapp.pages.Index;
 import top.yunp.cms4py.framework.web.routing.CRoute;
 
 class Routes {
-	public static function configRoutes():Array<CRoute> {
-		var apis = new API();
-		apis.addAction("user.profile.aspx", new Profile());
-		apis.addAction("user.signup.aspx", new SignUp());
+    public static function configRoutes():Array<CRoute> {
+        var apis = new API();
+        apis.addAction("user.profile.aspx", new Profile());
+        apis.addAction("user.signup.aspx", new SignUp());
 
-		return [
-			new CRoute("/", new Index()),
-			new CRoute("/about", new About()),
-			new CRoute("/articles", new Articles()),
-			new CRoute("/sign", new Sign()),
-			new CRoute("/reset-password", new ResetPassword()),
-			new CRoute("/apis/{action}", apis)
-		];
-	}
+        return [
+            new CRoute("/", new Index()),
+            new CRoute("/about", new About()),
+            new CRoute("/articles", new Articles()),
+            new CRoute("/sign", new Sign()),
+            new CRoute("/profile", new com.example.myapp.pages.Profile()),
+            new CRoute("/reset-password", new ResetPassword()),
+            new CRoute("/apis/{action}", apis, ["GET", "POST"])
+        ];
+    }
 }

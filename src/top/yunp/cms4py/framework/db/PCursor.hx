@@ -29,7 +29,7 @@ class PCursor {
 
     @async public function count(query:Dynamic) {
         var db = PDAL.getInstance().op;
-        var rows = @await _cursor.execute(db(query).count());
+        var rows = @await _cursor.execute(db.query(query).count());
         if (rows != 1) {
             return 0;
         }
@@ -44,7 +44,7 @@ class PCursor {
 
     @async public function select(query:Dynamic, ?fields:Array<Dynamic>, ?options:Dynamic):Array<Dict<String, Dynamic>> {
         var db = PDAL.getInstance().op;
-        @await _cursor.execute(db(query).select(fields, options));
+        @await _cursor.execute(db.query(query).select(fields, options));
         return @await fetchall();
     }
 
@@ -68,11 +68,11 @@ class PCursor {
 
     @async public function delete(query:Dynamic):Int {
         var db = PDAL.getInstance().op;
-        return @await execute(db(query).delete());
+        return @await execute(db.query(query).delete());
     }
 
     @async public function update(query:Dynamic, data:Dynamic):Int {
         var db = PDAL.getInstance().op;
-        return @await execute(db(query).update(data));
+        return @await execute(db.query(query).update(data));
     }
 }

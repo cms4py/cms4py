@@ -26,14 +26,32 @@ package com.example.myapp.apis.user;
 import top.yunp.cms4py.app.pages.apis.actions.Action;
 import python.Dict;
 import top.yunp.cms4py.framework.web.http.Context;
+import top.yunp.cms4py.framework.logger.Logger;
+import python.internal.AnonObject;
 
 @:build(hxasync.AsyncMacro.build())
 class Profile extends Action {
-	public function new() {
-		super();
-	}
+    public function new() {
+        super();
+    }
 
-	@async override function doAction(context:Context):Dict<String, Dynamic> {
-		return Action.createOkResult({});
-	}
+    @async override function doAction(context:Context):Dict<String, Dynamic> {
+
+        var result:Dynamic = null;
+
+        if (context.session.userid != null) {
+            var user:Dict<String, Dynamic> = @await context.useCursor(@async c -> {
+                return @await c.selectOne(context.db.user.id == context.session.userid);
+            });
+
+            if (user != null) {
+                user.remove("password");
+                result = Action.createOkResult(new AnonObject(user));
+            }
+        }
+        if (result == null) {
+            result = Action.createOkResult();
+        }
+        return result;
+    }
 }

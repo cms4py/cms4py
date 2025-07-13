@@ -28,24 +28,29 @@ import top.yunp.cms4py.framework.web.http.Context;
 
 @:build(hxasync.AsyncMacro.build())
 class Action {
-	public function new() {}
+    public function new() {}
 
-	@async public function doAction(context:Context):Dynamic {
-		throw new NotImplementedError();
-	}
+    @async public function doAction(context:Context):Dynamic {
+        throw new NotImplementedError();
+    }
 
-	public static final CODE_OK = 0;
-	public static final CODE_ACTION_NOT_FOUND = 8001;
+    public static final CODE_OK = 0;
+    public static final CODE_ERROR = 1;
+    public static final CODE_ACTION_NOT_FOUND = 8001;
 
-	public static function createOkResult(?result:Dynamic) {
-		return createResult(CODE_OK, "OK", result);
-	}
+    public static function createOkResult(?result:Dynamic) {
+        return createResult(CODE_OK, "OK", result);
+    }
 
-	public static function createResult(code:Int, message:String, ?result:Dynamic):Dynamic {
-		var d:Dynamic = {code: code, message: message};
-		if (result != null) {
-			d.result = result;
-		}
-		return d;
-	}
+    public static function createErrorResult(?result:Dynamic) {
+        return createResult(CODE_ERROR, "Error", result);
+    }
+
+    public static function createResult(code:Int, message:String, ?result:Dynamic):Dynamic {
+        var d:Dynamic = {code: code, message: message};
+        if (result != null) {
+            d.result = result;
+        }
+        return d;
+    }
 }
