@@ -47,10 +47,13 @@
                 <input type="password" class="form-control" id="confirmPassword" style="border-radius: 0 0 5px 5px;"
                        placeholder="Confirm your password" v-model="passwordConfirm" required>
                 <label for="confirmPassword">确认密码</label>
+                <div class="text-danger" v-if="password!=passwordConfirm">密码不一致</div>
             </div>
             <p></p>
             <p>
-                <button class="btn btn-primary w-100 py-2" type="submit" :disabled="performing">注册</button>
+                <button class="btn btn-primary w-100 py-2" type="submit"
+                        :disabled="performing||password!=passwordConfirm">注册
+                </button>
             </p>
             <div>
                 <p>已经有账号？<a href="#" @click="mode='login'">登录</a></p>
@@ -124,6 +127,7 @@
                     formSubmitHandler,
                     username,
                     password,
+                    passwordConfirm,
                     rememberMe,
                     registerUsernameAlert,
                     performing
