@@ -76,7 +76,7 @@ class JWTSession {
     private function set_userid(value:String):String {
         if (_userid != value) {
             _userid = value;
-            _exp = Date.now().getTime() + 3600000 * 24 * Server.web.sessionAge;
+            _exp = Date.now().getTime() + Server.web.sessionAge * 1000;
             _needUpdateJwt = true;
         }
         return _userid;
@@ -97,5 +97,18 @@ class JWTSession {
         } else {
             return _jwt;
         }
+    }
+
+    private var _rememberMe = false;
+
+    public var rememberMe(get, set):Bool;
+
+    private function set_rememberMe(value:Bool):Bool {
+        _rememberMe = value;
+        return _rememberMe;
+    }
+
+    private function get_rememberMe():Bool {
+        return _rememberMe;
     }
 }

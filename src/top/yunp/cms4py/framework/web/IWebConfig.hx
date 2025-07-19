@@ -43,7 +43,7 @@ interface IWebConfig {
     public var sessionJwtSecret:String;
 
     /**
-    Session age, in days
+    Session age, in seconds
     **/
     public var sessionAge:Int;
 }

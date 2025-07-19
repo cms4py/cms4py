@@ -52,7 +52,11 @@ class Page {
             }
             resp = @await execute(context);
             if (context.session.needUpdateJwt) {
-                resp.set_cookie(config.sessionJwtName, context.session.jwt);
+                if (context.session.rememberMe) {
+                    resp.set_cookie(config.sessionJwtName, context.session.jwt, config.sessionAge);
+                } else {
+                    resp.set_cookie(config.sessionJwtName, context.session.jwt);
+                }
             }
         } catch (e:PageException) {
             if (e.response != null) {

@@ -12,6 +12,35 @@
     <script src="/static/lib/bootstrap-5.3.7-dist/js/bootstrap.bundle.min.js"></script>
     <script src="/static/lib/vue.global.prod.js"></script>
     <link rel="stylesheet" href="/static/styles/layout.css">
+
+    <script>
+        (function () {
+            window.yunp = window.yunp || {};
+
+            window.yunp._query = undefined;
+
+            Object.assign(yunp, {
+                parseUrlParams(kvs) {
+                    let r = {};
+                    let tokens = kvs.split("&");
+                    for (let t of tokens) {
+                        let kv = t.split("=");
+                        if (kv.length == 2) {
+                            r[kv[0]] = decodeURIComponent(kv[1]);
+                        }
+                    }
+                    return r;
+                },
+
+                get query() {
+                    if (!yunp._query) {
+                        yunp._query = this.parseUrlParams(location.search.substring(1));
+                    }
+                    return yunp._query;
+                }
+            });
+        })();
+    </script>
 </head>
 
 <body class="bg-body-tertiary">

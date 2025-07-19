@@ -43,6 +43,7 @@ class SignIn extends Action {
         var form = @await context.request.form();
         var username = form.get("username");
         var password = form.get("password");
+        var rememberMe = form.get("remember_me");
 
         if (username == null || password == null) {
             throw new ParametersError();
@@ -65,6 +66,9 @@ class SignIn extends Action {
 
         var userid = user.get("id");
         context.session.userid = userid;
+        if (rememberMe != null) {
+            context.session.rememberMe = true;
+        }
         return Action.createOkResult({id:userid});
     }
 }
