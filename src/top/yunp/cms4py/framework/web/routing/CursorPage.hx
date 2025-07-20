@@ -39,5 +39,5 @@ abstract class CursorPage extends Page {
         return r;
     }
 
-    @async public abstract function cexecute(context:Context, cursor:PCursor):Response;
+    public abstract function cexecute(context:Context, cursor:PCursor):Response;
 }
