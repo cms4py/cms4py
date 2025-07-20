@@ -2,7 +2,22 @@
 
 {% block content %}
 <div class="container">
-  <h1>About</h1>
-  <p>This is the about page.</p>
+    <div style="height: 10px"></div>
+    <table class="table">
+        <tbody>
+        <tr>
+            <th>登录名</th>
+            <td>{{user.login_name}}</td>
+        </tr>
+        <tr>
+            <th>手机</th>
+            <td>{{user.phone}}</td>
+        </tr>
+        <tr>
+            <th>邮箱</th>
+            <td>{{user.email}}</td>
+        </tr>
+        </tbody>
+    </table>
 </div>
 {% endblock %}
