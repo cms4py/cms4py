@@ -9,3 +9,4 @@ out
 __pycache__
 .venv
 mariadb_data
+*.iml
