@@ -23,10 +23,11 @@
 
 package com.example.myapp.pages;
 
+import com.example.myapp.pages.validators.UserValidators;
 import externals.starlette.responses.Response;
+import top.yunp.cms4py.framework.logger.Logger;
 import top.yunp.cms4py.framework.web.http.Context;
 import top.yunp.cms4py.framework.web.routing.Page;
-import com.example.myapp.pages.validators.UserValidators;
 
 @:build(hxasync.AsyncMacro.build())
 class Profile extends Page {
@@ -34,6 +35,12 @@ class Profile extends Page {
 
     @async override function execute(context:Context):Response {
         UserValidators.checkLoginStatus(context);
+
+        var user = @await context.useCursor(@async c -> {
+            return @await c.selectOne(context.db.user.id == context.session.userid);
+        });
+
+        Logger.info(user);
 
         return context.render("profile.html", {title: "我的信息"});
     }

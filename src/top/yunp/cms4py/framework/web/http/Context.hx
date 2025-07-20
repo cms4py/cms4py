@@ -38,101 +38,101 @@ import externals.starlette.responses.Response;
 
 @:build(hxasync.AsyncMacro.build())
 class Context {
-	public function new(request:Request) {
-		this._request = request;
-	}
+    public function new(request:Request) {
+        this._request = request;
+    }
 
-	private var _request:Request;
+    private var _request:Request;
 
-	public var request(get, never):Request;
+    public var request(get, never):Request;
 
-	private function get_request():Request {
-		return _request;
-	}
+    private function get_request():Request {
+        return _request;
+    }
 
-	public var siteName(get, set):String;
+    public var siteName(get, set):String;
 
-	private function get_siteName() {
-		if (Builtins.hasattr(request, "siteName")) {
-			return (request : Dynamic).siteName;
-		} else {
-			return "";
-		}
-	}
+    private function get_siteName() {
+        if (Builtins.hasattr(request, "siteName")) {
+            return (request : Dynamic).siteName;
+        } else {
+            return "";
+        }
+    }
 
-	private function set_siteName(value:String) {
-		(request : Dynamic).siteName = value;
-		return value;
-	}
+    private function set_siteName(value:String) {
+        (request : Dynamic).siteName = value;
+        return value;
+    }
 
-	public function render(name:String, ?context:Dynamic):Response {
-		return Templates.getInstance().response(request, name, context);
-	}
+    public function render(name:String, ?context:Dynamic):Response {
+        return Templates.getInstance().response(request, name, context);
+    }
 
-	public function json(data:Dynamic):Response {
-		return FuncTools.callNamed(PlainTextResponse, {content: Json.stringify(data), media_type: "application/json"});
-	}
+    public function json(data:Dynamic):Response {
+        return FuncTools.callNamed(PlainTextResponse, {content: Json.stringify(data), media_type: "application/json"});
+    }
 
-	public var db(get, null):PDALOp;
+    public var db(get, null):PDALOp;
 
-	private function get_db():PDALOp {
-		return PDAL.getInstance().op;
-	}
+    private function get_db():PDALOp {
+        return PDAL.getInstance().op;
+    }
 
-	@async public function useCursor(handler:(cursor:PCursor) -> Dynamic):Dynamic {
-		return @await DbConnector.getInstance().use(handler);
-	}
+    @async public function useCursor<R>(handler:(cursor:PCursor) -> R):R {
+        return @await DbConnector.getInstance().use(handler);
+    }
 
-	public var method(get, null):String;
+    public var method(get, null):String;
 
-	private function get_method() {
-		return request.method;
-	}
+    private function get_method() {
+        return request.method;
+    }
 
-	public var url(get, null):Dynamic;
+    public var url(get, null):Dynamic;
 
-	private function get_url() {
-		return request.url;
-	}
+    private function get_url() {
+        return request.url;
+    }
 
-	public var client(get, null):Dynamic;
+    public var client(get, null):Dynamic;
 
-	private function get_client() {
-		return request.client;
-	}
+    private function get_client() {
+        return request.client;
+    }
 
-	public var path_params(get, null):Dict<String, String>;
+    public var path_params(get, null):Dict<String, String>;
 
-	private function get_path_params() {
-		return request.path_params;
-	}
+    private function get_path_params() {
+        return request.path_params;
+    }
 
-	public var query_params(get, null):Dict<String, String>;
+    public var query_params(get, null):Dict<String, String>;
 
-	private function get_query_params() {
-		return request.query_params;
-	}
+    private function get_query_params() {
+        return request.query_params;
+    }
 
-	public var headers(get, null):Dict<String, String>;
+    public var headers(get, null):Dict<String, String>;
 
-	private function get_headers() {
-		return request.headers;
-	}
+    private function get_headers() {
+        return request.headers;
+    }
 
-	public var cookies(get, null):Dict<String, String>;
+    public var cookies(get, null):Dict<String, String>;
 
-	private function get_cookies() {
-		return request.cookies;
-	}
+    private function get_cookies() {
+        return request.cookies;
+    }
 
-	public var session(get, null):JWTSession;
+    public var session(get, null):JWTSession;
 
-	private var _session:JWTSession = null;
+    private var _session:JWTSession = null;
 
-	private function get_session() {
-		if (_session == null) {
-			_session = new JWTSession(this);
-		}
-		return _session;
-	}
+    private function get_session() {
+        if (_session == null) {
+            _session = new JWTSession(this);
+        }
+        return _session;
+    }
 }
