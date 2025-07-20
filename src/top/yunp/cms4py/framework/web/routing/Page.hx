@@ -40,7 +40,7 @@ class Page {
     }
 
     @:allow(top.yunp.cms4py.framework.web.routing.CRoute)
-    @async function __internal_call__(request:Request):Response {
+    @async final function __internal_call__(request:Request):Response {
         var resp:Response = null;
         try {
             var config = Server.web;
