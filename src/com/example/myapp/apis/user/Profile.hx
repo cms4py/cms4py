@@ -35,7 +35,7 @@ class Profile extends Action {
         super();
     }
 
-    @async override function doAction(context:Context):Dict<String, Dynamic> {
+    @async override function doAction(context:Context):Dynamic {
 
         var result:Dynamic = null;
 
