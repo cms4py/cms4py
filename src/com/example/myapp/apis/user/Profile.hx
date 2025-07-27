@@ -40,13 +40,12 @@ class Profile extends Action {
         var result:Dynamic = null;
 
         if (context.session.userid != null) {
-            var user:Dict<String, Dynamic> = @await context.useCursor(@async c -> {
+            var user:Dynamic = @await context.useCursor(@async c -> {
                 return @await c.selectOne(context.db.user.id == context.session.userid);
             });
 
             if (user != null) {
-                user.remove("password");
-                result = Action.createOkResult(new AnonObject(user));
+                result = Action.createOkResult(user);
             }
         }
         if (result == null) {

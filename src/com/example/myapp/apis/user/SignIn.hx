@@ -52,9 +52,9 @@ class SignIn extends Action {
         var crypt:Dynamic = new CRYPT();
         var pt:Tuple1<Dynamic> = crypt(password);
         var p = pt._1;
-        var user:Dict<String, Dynamic> = @await context.useCursor(@async c -> {
+        var user:Dynamic = @await context.useCursor(@async c -> {
             var u = @await c.selectOne(context.db.user.login_name == username);
-            if (u != null && p == u.get("password")) {
+            if (u != null && p == u.password) {
                 return u;
             }
             return null;
@@ -64,7 +64,7 @@ class SignIn extends Action {
             throw new InvalidLogin();
         }
 
-        var userid = user.get("id");
+        var userid = user.id;
         context.session.userid = userid;
         if (rememberMe != null) {
             context.session.rememberMe = true;

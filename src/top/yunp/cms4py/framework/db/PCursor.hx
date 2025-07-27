@@ -4,6 +4,7 @@ import externals.aiomysql.cursors.Cursor;
 import top.yunp.cms4py.framework.db.PTable;
 import python.Dict;
 import top.yunp.cms4py.framework.db.PDAL;
+import python.internal.AnonObject;
 
 @:build(hxasync.AsyncMacro.build())
 class PCursor {
@@ -42,13 +43,14 @@ class PCursor {
         return (@await count(query)) <= 0;
     }
 
-    @async public function select(query:Dynamic, ?fields:Array<Dynamic>, ?options:Dynamic):Array<Dict<String, Dynamic>> {
+    @async public function select(query:Dynamic, ?fields:Array<Dynamic>, ?options:Dynamic):Array<Dynamic> {
         var db = PDAL.getInstance().op;
         @await _cursor.execute(db.query(query).select(fields, options));
-        return @await fetchall();
+        var list:Array<Dynamic> = @await fetchall();
+        return list.map(t -> new AnonObject(t));
     }
 
-    @async public function selectOne(query:Dynamic, ?fields:Array<Dynamic>):Dict<String, Dynamic> {
+    @async public function selectOne(query:Dynamic, ?fields:Array<Dynamic>):Dynamic {
         var result = @await select(query, fields, {limitby:[0, 1]});
         if (result.length > 0) {
             return result[0];

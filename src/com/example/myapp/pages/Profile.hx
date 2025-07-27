@@ -40,8 +40,6 @@ class Profile extends Page {
             return @await c.selectOne(context.db.user.id == context.session.userid);
         });
 
-        user.remove("password");
-
         return context.render("profile.html", {title: "我的信息", user:user});
     }
 }

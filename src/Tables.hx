@@ -5,9 +5,9 @@ import externals.pydal.DAL;
 
 
 class Tables {
-	public static function defineTables(db:DAL) {
-		db.define_table(
-            "user", 
+    public static function defineTables(db:DAL) {
+        db.define_table(
+            "user",
             new Field("login_name"),
             new Field("nicename"),
             new Field("email"),
@@ -20,5 +20,5 @@ class Tables {
             new Field("updated_at", "datetime"),
             new Field("deleted_at", "datetime")
         );
-	}
+    }
 }
